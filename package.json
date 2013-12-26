@@ -1,12 +1,12 @@
 {
-    "name": "Chat",
-    "description": "Web-based SMS chat app",
+    "name": "DirectMailer",
+    "description": "Web-based direct mailing solution for businesses",
     "version": "0.0.1",
     "author": "Andy Jiang",
     "main": "server.js",
     "repository": {
         "type": "git",
-        "url": "https://github.com/lambtron/chat.git"
+        "url": "https://bitbucket.org/andyjiang/directmailer"
     },
     "engines": {
         "node": "0.10.x",
@@ -14,12 +14,11 @@
     },
     "dependencies": {
         "express": "3.x",
-        "jade": "latest",
         "mongoose": "2.x",
         "bower": "latest",
         "underscore": "latest",
-        "twilio": "latest",
-        "socket.io": "latest",
+        // "twilio": "latest",
+        // "socket.io": "latest",
         "moment": "latest"
     }
 }
