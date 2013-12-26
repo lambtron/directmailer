@@ -1,8 +1,8 @@
 'use strict';
 
 $(document).ready(function() {
-	// $('#new-user').dropdown();
-	// $('.dropdown-menu input').click(function(e) {
- //    e.stopPropagation();
+	// filepicker.setKey('AVOg9LZdqQDycO5KXbgByz');
+	// filepicker.pick(function(InkBlob) {
+	// 	console.log(JSON.stringify(InkBlob));
 	// });
 });

@@ -16,11 +16,13 @@
 	<!-- load bootstrap -->
 
 	<!-- SPELLS -->
-
+	<script src="//cdnjs.cloudflare.com/ajax/libs/es5-shim/2.2.0/es5-sham.min.js"></script>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
 	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.5/angular.min.js"></script>
+	<script src="/lib/ngfileupload/angular-file-upload.min.js"></script>
 	<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+	<script type="text/javascript" src="//api.filepicker.io/v1/filepicker.js"></script>
 	<script src="/public/js/app.js"></script>
 	<script src="/public/js/services.js"></script>
 	<script src="/public/js/controllers.js"></script>
@@ -60,76 +62,117 @@
 			  <h2>1. Document upload</h2>
 			</div>
 			<div class="col-lg-6">
-				<div class="form-group col-lg-10">
-	      	<input id="filebutton" name="filebutton" class="input-file" type="file">
+				<div class="form-group col-lg-12" ng-show="uploader.queue == 0">
+					<div class="well drop-zone" ng-show="uploader.hasHTML5" ng-file-drop ng-file-over="ng-file-over-green">
+						Drag your file here
+					</div>
+	      	<input id="filebutton" name="filebutton" class="input-file" type="file" required ng-file-select>
 	      </div>
-	      <div class="form-group col-lg-10">
+	      <div class="form-group col-lg-12">
 			    <label class="radio">
-			      <input type="radio" name="radios" id="radios-0" value="black-and-white" checked="checked">
+			      <input type="radio" name="radios" value="black-and-white" checked="checked">
 			      Black and white ($2)
 			    </label>
 			    <label class="radio">
-			      <input type="radio" name="radios" id="radios-1" value="color">
+			      <input type="radio" name="radios" value="color">
 			      Color ($3)
 			    </label>
 				</div>
-	    </div><!-- /input-group -->
+	    </div>
+	    <div class="col-lg-6">
+	    	<div class="form-group col-lg-12">
+	    		<table class="table">
+	    			<thead>
+	    				<tr>
+	    					<th width="50%">Name</th>
+	    					<th ng-show="uploader.hasHTML5">Size</th>
+	    					<th ng-show="uploader.hasHTML5">Progress</th>
+	    					<th>Success</th>
+	    					<th>Remove</th>
+	    				</tr>
+	    			</thead>
+	    			<tbody>
+	    				<tr ng-repeat="item in uploader.queue">
+	    					<td><strong>{{ item.file.name }}</strong></td>
+	    					<td ng-show="uploader.hasHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
+	    					<td ng-show="uploader.hasHTML5">
+	    						<div class="progress" style="margin-bottom: 0;">
+	    							<div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+	    						</div>
+	    					</td>
+	    					<td>
+	    						<div ng-show="item.isSuccess"></div>
+	    					</td>
+	    					<td nowrap>
+	    						<button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+	    							Remove
+	    						</button>
+	    					</td>
+	    				</tr>
+	    		</table>
+	    	</div>
+	    </div>
+	    <!-- TODO: Use Angular to provide a PDF preview when the pdf is uploaded. -->
+	    <!-- TODO: Use Angular directives to detect a change in the upload and the radio button,
+	    with this change, POST new PDF file to the back end. -->
+	    <!-- TODO: Have a green check appear when this section is completed. -->
 		</div>
 		<!-- 2. Select your sender address -->
 		<div class="row">
 			<div class="page-header">
 				<h2>2. From Address</h2>
 			</div>
-			<div class="col-lg-6">
-			  <div class="form-group col-lg-10">
-		    	<input type="text" placeholder="Name" class="form-control" required="">
+			<div class="col-lg-6 form-group">
+			  <div class="form-group col-lg-12">
+		    	<input type="text" placeholder="Name" class="form-control" name="fromAddressName" ng-model="fromAddress.name" required>
 			  </div>
-			  <div class="form-group col-lg-10">
-			    <input type="text" placeholder="Street Address Line 1" class="form-control" required="">
+			  <div class="form-group col-lg-12">
+			    <input type="text" placeholder="Street Address Line 1" class="form-control" name="fromAddressStreet1" ng-model="fromAddress.street1" required>
 			  </div>
-			  <div class="form-group col-lg-10">
-			    <input type="text" placeholder="Street Address Line 2" class="form-control" required="">
+			  <div class="form-group col-lg-12">
+			    <input type="text" placeholder="Street Address Line 2" class="form-control" name="fromAddressStreet2" ng-model="fromAddress.street2">
 			  </div>
-			  <div class="form-group col-lg-4">
-			    <input type="text" placeholder="City" class="form-control" required="">
+			  <div class="form-group col-lg-6">
+			    <input type="text" placeholder="City" class="form-control" name="fromAddressCity" ng-model="fromAddress.city" required>
 			  </div>
-
 			  <div class="form-group col-lg-3">
-			    <input type="text" placeholder="State" class="form-control" required="">
+			    <input type="text" placeholder="State" class="form-control" name="fromAddressState" ng-model="fromAddress.state" required>
 			  </div>
-
 			  <div class="form-group col-lg-3">
-			    <input type="text" placeholder="ZIP" class="form-control" required="">
+			    <input type="number" placeholder="ZIP" class="form-control" name="fromAddressZip" ng-model="fromAddress.zip" required ng-blur="validateFormAndPost()">
 			  </div>
 			</div>
+			<!-- TODO: When City, State, and ZIP is added, then check for required fields on front end.
+			Then, POST Address to backend. Respond with Success (green check). -->
 		</div>
 		<!-- 3. Select your recipients (individual or upload) -->
 		<div class="row">
 			<div class="page-header">
 				<h2>3. To Address</h2>
 			</div>
-			<div class="col-lg-6">
-			  <div class="form-group col-lg-10">
-		    	<input type="text" placeholder="Name" class="form-control" required="">
+			<div class="col-lg-6 form-group">
+			  <div class="form-group col-lg-12">
+		    	<input type="text" placeholder="Name" class="form-control" name="toAddressName" ng-model="toAddress.name" required>
 			  </div>
-			  <div class="form-group col-lg-10">
-			    <input type="text" placeholder="Street Address Line 1" class="form-control" required="">
+			  <div class="form-group col-lg-12">
+			    <input type="text" placeholder="Street Address Line 1" class="form-control" name="toAddressStreet1" ng-model="toAddress.street1" required>
 			  </div>
-			  <div class="form-group col-lg-10">
-			    <input type="text" placeholder="Street Address Line 2" class="form-control" required="">
+			  <div class="form-group col-lg-12">
+			    <input type="text" placeholder="Street Address Line 2" class="form-control" name="toAddressStreet2" ng-model="toAddress.street2">
 			  </div>
-			  <div class="form-group col-lg-4">
-			    <input type="text" placeholder="City" class="form-control" required="">
+			  <div class="form-group col-lg-6">
+			    <input type="text" placeholder="City" class="form-control" name="toAddressCity" ng-model="toAddress.city" required>
 			  </div>
-
 			  <div class="form-group col-lg-3">
-			    <input type="text" placeholder="State" class="form-control" required="">
+			    <input type="text" placeholder="State" class="form-control" name="toAddressState" ng-model="toAddress.state" required>
 			  </div>
-
 			  <div class="form-group col-lg-3">
-			    <input type="text" placeholder="ZIP" class="form-control" required="">
+			    <input type="number" placeholder="ZIP" class="form-control" name="toAddressZip" ng-model="toAddress.zip" required ng-blur="validateFormAndPost()">
 			  </div>
 			</div>
+			<!-- TODO: Same as Step 2. -->
+			<!-- TODO: Add Upload as CSV (need to figure out the best way to do this; email Lob?) -->
+			<!-- TODO: Add address verification (figure out how the UI for this is) -->
 		</div>
 		<!-- 4. Check out! Get your credit card. -->
 		<div class="row">
@@ -156,26 +199,28 @@
 						</tbody>
 					</table>
 				</div>
+				<!-- TODO: Dynamically update this based on Price. -->
 			</div>
 
 			<div class="col-lg-6">
-				<!-- <div class="form-group col-lg-10"> -->
 				<span class="payment-errors"></span>
-			  <div class="form-group col-lg-10">
-		    	<input type="text" placeholder="Card Number" class="form-control" required="">
+			  <div class="form-group col-lg-12">
+		    	<input type="number" name="creditCardNumber" placeholder="Card Number" class="form-control" ng-model="creditCard.number" required>
 			  </div>
-			  <div class="form-group col-lg-4">
-		    	<input type="text" placeholder="CVC" class="form-control" required="">
+			  <div class="form-group col-lg-3">
+		    	<input type="number" name="creditCardCvc" placeholder="CVC" class="form-control" ng-model="creditCard.cvc" required>
 			  </div>
-			  <div class="form-group col-lg-2">
-		    	<input type="text" placeholder="MM" class="form-control" required="">
+			  <div class="form-group col-lg-3">
+		    	<input type="number" name="creditCardMm" ng-minlength=2 ng-maxlength=2 placeholder="MM" class="form-control" ng-model="creditCard.mm" required>
 			  </div>
-			  <div class="form-group col-lg-4">
-		    	<input type="text" placeholder="YYYY" class="form-control" required="">
+			  <div class="form-group col-lg-6">
+		    	<input type="text" name="creditCardYyyy" ng-maxlength=4 ng-maxlength=4 placeholder="YYYY" class="form-control" ng-model="creditCard.yyyy" required>
 			  </div>
 			  <div class="form-group col-lg-10">
   				<button type="button" class="btn btn-primary">Pay and Send!</button>
   			</div>
+  			<!-- After submitting, take to new page; send receipt email and page with registration
+  			and tracking information. -->
 			</div>
 		</div>
 		<!-- 5. Track your mail! Get email updates by signing up -->

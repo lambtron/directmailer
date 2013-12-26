@@ -16,8 +16,8 @@ require('./config/config');
 // Configuration ===================================================================================
 mongoose.connect(database.url);
 
-app.set('views', __dirname + 'public/views');
 app.use('/assets', express.static(__dirname + '/assets'));
+app.use('/lib', express.static(__dirname + '/lib'));
 app.use('/public', express.static(__dirname + '/public'));
 app.use(express.bodyParser());
 

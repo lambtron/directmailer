@@ -16,7 +16,11 @@ var mongoose = require('mongoose')
 
 // Public functions. ===============================================================================
 module.exports = function(app) {
-	// API routes for Message model ==================================================================
+	// POST a file. Save it so Lob can send it later. Return preview and success.
+	app.post('/api/file', function(req, res) {
+		console.log(req);
+		res.send('200');
+	});
 
 	// * POST, add new user to mongodb.
 	app.post('/api/user', function(req, res) {
