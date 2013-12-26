@@ -21,35 +21,35 @@ module.exports = function(app) {
 	// * POST, add new user to mongodb.
 	app.post('/api/user', function(req, res) {
 		var first_name = req.body.firstName
-		  , last_name = req.body.lastName,
+		  , last_name = req.body.lastName;
 		  // , phone_number = Twilio.standardizePhoneNumber(req.body.phoneNumber);
 
-		User.findOne({ phone_number: phone_number }, function(err, user) {
-			if (err) {
-				res.send(err);
-			};
+		// User.findOne({ phone_number: phone_number }, function(err, user) {
+		// 	if (err) {
+		// 		res.send(err);
+		// 	};
 
-			// If existing user is found.
-			if (user) {
+		// 	// If existing user is found.
+		// 	if (user) {
 
-				// Need to return all users.
+		// 		// Need to return all users.
 				
-			} else {
-				console.log('Creating new user.');
+		// 	} else {
+		// 		console.log('Creating new user.');
 
-				// If user is not found, then create a new one.
-				User.create({
-					first_name: first_name,
-					last_name: last_name
-					// phone_number: phone_number
-				}, function(err, user) {
-					if (err) {
-						res.send(err);
-					};
+		// 		// If user is not found, then create a new one.
+		// 		User.create({
+		// 			first_name: first_name,
+		// 			last_name: last_name
+		// 			// phone_number: phone_number
+		// 		}, function(err, user) {
+		// 			if (err) {
+		// 				res.send(err);
+		// 			};
 
-				});
-			};
-		});
+		// 		});
+		// 	};
+		// });
 	});
 
 	// + GET all users and messages.
