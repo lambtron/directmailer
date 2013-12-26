@@ -7,7 +7,7 @@ var express = require('express')
   , server = http.createServer(app)
   , mongoose = require('mongoose')
   , database = require('./config/database')
-  , io = require('socket.io').listen(server)
+  // , io = require('socket.io').listen(server)
   , port = process.env.PORT || 3000;
 
 // Set environmental variables.
@@ -22,7 +22,7 @@ app.use('/public', express.static(__dirname + '/public'));
 app.use(express.bodyParser());
 
 // Routes ==========================================================================================
-require('./config/routes.js')(app, io);
+require('./config/routes.js')(app);
 
 // Application route =============================================================================
 app.get('*', function(req, res) {
