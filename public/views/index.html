@@ -20,6 +20,7 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
 	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.5/angular.min.js"></script>
+	<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
 	<script src="/public/js/app.js"></script>
 	<script src="/public/js/services.js"></script>
 	<script src="/public/js/controllers.js"></script>
@@ -48,25 +49,136 @@
 	<div class="container">
 		<div class="row">
 			<div class="jumbotron">
-			  <h1>Reach your customers via mail</h1>
-			  <p>Some blurb about how this is a great product.</p>
+			  <h1>Mail via the web</h1>
+			  <p>Upload a .pdf and have it printed and sent to any address (international mailings will be charged an additional $1).</p>
 			  <p><a class="btn btn-primary btn-lg" role="button">Learn more</a></p>
 			</div>
 		</div>
 		<!-- 1. Upload your document or image or etc. -->
 		<div class="row">
-			
+			<div class="page-header">
+			  <h2>1. Document upload</h2>
+			</div>
+			<div class="col-lg-6">
+				<div class="form-group col-lg-10">
+	      	<input id="filebutton" name="filebutton" class="input-file" type="file">
+	      </div>
+	      <div class="form-group col-lg-10">
+			    <label class="radio">
+			      <input type="radio" name="radios" id="radios-0" value="black-and-white" checked="checked">
+			      Black and white ($2)
+			    </label>
+			    <label class="radio">
+			      <input type="radio" name="radios" id="radios-1" value="color">
+			      Color ($3)
+			    </label>
+				</div>
+	    </div><!-- /input-group -->
 		</div>
 		<!-- 2. Select your sender address -->
 		<div class="row">
+			<div class="page-header">
+				<h2>2. From Address</h2>
+			</div>
+			<div class="col-lg-6">
+			  <div class="form-group col-lg-10">
+		    	<input type="text" placeholder="Name" class="form-control" required="">
+			  </div>
+			  <div class="form-group col-lg-10">
+			    <input type="text" placeholder="Street Address Line 1" class="form-control" required="">
+			  </div>
+			  <div class="form-group col-lg-10">
+			    <input type="text" placeholder="Street Address Line 2" class="form-control" required="">
+			  </div>
+			  <div class="form-group col-lg-4">
+			    <input type="text" placeholder="City" class="form-control" required="">
+			  </div>
+
+			  <div class="form-group col-lg-3">
+			    <input type="text" placeholder="State" class="form-control" required="">
+			  </div>
+
+			  <div class="form-group col-lg-3">
+			    <input type="text" placeholder="ZIP" class="form-control" required="">
+			  </div>
+			</div>
 		</div>
 		<!-- 3. Select your recipients (individual or upload) -->
 		<div class="row">
+			<div class="page-header">
+				<h2>3. To Address</h2>
+			</div>
+			<div class="col-lg-6">
+			  <div class="form-group col-lg-10">
+		    	<input type="text" placeholder="Name" class="form-control" required="">
+			  </div>
+			  <div class="form-group col-lg-10">
+			    <input type="text" placeholder="Street Address Line 1" class="form-control" required="">
+			  </div>
+			  <div class="form-group col-lg-10">
+			    <input type="text" placeholder="Street Address Line 2" class="form-control" required="">
+			  </div>
+			  <div class="form-group col-lg-4">
+			    <input type="text" placeholder="City" class="form-control" required="">
+			  </div>
+
+			  <div class="form-group col-lg-3">
+			    <input type="text" placeholder="State" class="form-control" required="">
+			  </div>
+
+			  <div class="form-group col-lg-3">
+			    <input type="text" placeholder="ZIP" class="form-control" required="">
+			  </div>
+			</div>
 		</div>
 		<!-- 4. Check out! Get your credit card. -->
 		<div class="row">
+			<div class="page-header">
+				<h2>4. Check out and send</h2>
+			</div>
+			<!-- Dynamically generate a receipt here. -->
+			<div class="row">
+				<div class="col-lg-6">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Item</th>
+								<th>Quantity</th>
+								<th>Price</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<th>Filename.pdf</th>
+								<th>2,000</th>
+								<th>$800</th>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<div class="col-lg-6">
+				<!-- <div class="form-group col-lg-10"> -->
+				<span class="payment-errors"></span>
+			  <div class="form-group col-lg-10">
+		    	<input type="text" placeholder="Card Number" class="form-control" required="">
+			  </div>
+			  <div class="form-group col-lg-4">
+		    	<input type="text" placeholder="CVC" class="form-control" required="">
+			  </div>
+			  <div class="form-group col-lg-2">
+		    	<input type="text" placeholder="MM" class="form-control" required="">
+			  </div>
+			  <div class="form-group col-lg-4">
+		    	<input type="text" placeholder="YYYY" class="form-control" required="">
+			  </div>
+			  <div class="form-group col-lg-10">
+  				<button type="button" class="btn btn-primary">Pay and Send!</button>
+  			</div>
+			</div>
 		</div>
-		<!-- 5. Track your letters! Get email updates by signing up -->
+		<!-- 5. Track your mail! Get email updates by signing up -->
 		<div class="row">
 		</div>
 	</div>
