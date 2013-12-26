@@ -68,7 +68,7 @@
 					</div>
 	      	<input id="filebutton" name="filebutton" class="input-file" type="file" required ng-file-select>
 	      </div>
-	      <div class="form-group col-lg-12">
+	      <div class="form-group col-lg-12" ng-show="uploader.queue > 0">
 			    <label class="radio">
 			      <input type="radio" name="radios" value="black-and-white" checked="checked">
 			      Black and white ($2)
