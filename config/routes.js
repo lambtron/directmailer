@@ -18,8 +18,15 @@ var mongoose = require('mongoose')
 module.exports = function(app) {
 	// POST a file. Save it so Lob can send it later. Return preview and success.
 	app.post('/api/file', function(req, res) {
+		// Store in Mongoose (assign it hash generated for the user. User redeems hash by registering
+		// via email.)
 		console.log(req);
-		res.send('200');
+		// res.send('200');
+	});
+
+	// POST check out.
+	app.post('/api/checkout', function(req, res) {
+		// Package STRIPE (charge them!) and LOB it over (send them the JOB object).
 	});
 
 	// * POST, add new user to mongodb.

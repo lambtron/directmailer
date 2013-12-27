@@ -22,7 +22,6 @@
 	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.5/angular.min.js"></script>
 	<script src="/lib/ngfileupload/angular-file-upload.min.js"></script>
 	<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
-	<script type="text/javascript" src="//api.filepicker.io/v1/filepicker.js"></script>
 	<script src="/public/js/app.js"></script>
 	<script src="/public/js/services.js"></script>
 	<script src="/public/js/controllers.js"></script>
@@ -59,7 +58,7 @@
 		<!-- 1. Upload your document or image or etc. -->
 		<div class="row">
 			<div class="page-header">
-			  <h2>1. Document upload</h2>
+			  <h2>1. Upload your document</h2>
 			</div>
 			<div class="col-lg-6">
 				<div class="form-group col-lg-12" ng-show="uploader.queue == 0">
@@ -68,7 +67,7 @@
 					</div>
 	      	<input id="filebutton" name="filebutton" class="input-file" type="file" required ng-file-select>
 	      </div>
-	      <div class="form-group col-lg-12" ng-show="uploader.queue > 0">
+	      <div class="form-group col-lg-12">
 			    <label class="radio">
 			      <input type="radio" name="radios" value="black-and-white" checked="checked">
 			      Black and white ($2)
@@ -80,7 +79,7 @@
 				</div>
 	    </div>
 	    <div class="col-lg-6">
-	    	<div class="form-group col-lg-12">
+	    	<div class="form-group col-lg-12" >
 	    		<table class="table">
 	    			<thead>
 	    				<tr>
@@ -92,6 +91,13 @@
 	    				</tr>
 	    			</thead>
 	    			<tbody>
+	    				<tr ng-show="uploader.queue == 0">
+	    					<td><i><small>You haven't uploaded a file yet!</smalL></i></td>
+	    					<td></td>
+	    					<td></td>
+	    					<td></td>
+	    					<td></td>
+	    				</tr>
 	    				<tr ng-repeat="item in uploader.queue">
 	    					<td><strong>{{ item.file.name }}</strong></td>
 	    					<td ng-show="uploader.hasHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
@@ -113,8 +119,6 @@
 	    	</div>
 	    </div>
 	    <!-- TODO: Use Angular to provide a PDF preview when the pdf is uploaded. -->
-	    <!-- TODO: Use Angular directives to detect a change in the upload and the radio button,
-	    with this change, POST new PDF file to the back end. -->
 	    <!-- TODO: Have a green check appear when this section is completed. -->
 		</div>
 		<!-- 2. Select your sender address -->
@@ -214,7 +218,7 @@
 		    	<input type="number" name="creditCardMm" ng-minlength=2 ng-maxlength=2 placeholder="MM" class="form-control" ng-model="creditCard.mm" required>
 			  </div>
 			  <div class="form-group col-lg-6">
-		    	<input type="text" name="creditCardYyyy" ng-maxlength=4 ng-maxlength=4 placeholder="YYYY" class="form-control" ng-model="creditCard.yyyy" required>
+		    	<input type="number" name="creditCardYyyy" ng-maxlength=4 ng-maxlength=4 placeholder="YYYY" class="form-control" ng-model="creditCard.yyyy" required>
 			  </div>
 			  <div class="form-group col-lg-10">
   				<button type="button" class="btn btn-primary">Pay and Send!</button>
