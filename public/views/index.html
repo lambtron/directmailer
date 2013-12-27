@@ -124,9 +124,9 @@
 		<!-- 2. Select your sender address -->
 		<div class="row">
 			<div class="page-header">
-				<h2>2. From Address</h2>
+				<h2>2. Add Sender Address</h2>
 			</div>
-			<div class="col-lg-6 form-group">
+			<form class="col-lg-6 form-group" name="ngFromAddress">
 			  <div class="form-group col-lg-12">
 		    	<input type="text" placeholder="Name" class="form-control" name="fromAddressName" ng-model="fromAddress.name" required>
 			  </div>
@@ -134,25 +134,36 @@
 			    <input type="text" placeholder="Street Address Line 1" class="form-control" name="fromAddressStreet1" ng-model="fromAddress.street1" required>
 			  </div>
 			  <div class="form-group col-lg-12">
-			    <input type="text" placeholder="Street Address Line 2" class="form-control" name="fromAddressStreet2" ng-model="fromAddress.street2">
+			    <input type="text" placeholder="Street Address Line 2 (optional)" class="form-control" name="fromAddressStreet2" ng-model="fromAddress.street2">
 			  </div>
 			  <div class="form-group col-lg-6">
 			    <input type="text" placeholder="City" class="form-control" name="fromAddressCity" ng-model="fromAddress.city" required>
 			  </div>
 			  <div class="form-group col-lg-3">
-			    <input type="text" placeholder="State" class="form-control" name="fromAddressState" ng-model="fromAddress.state" required>
+			    <input type="text" placeholder="State" class="form-control" name="fromAddressState" ng-model="fromAddress.state" required ng-minlength=2>
 			  </div>
 			  <div class="form-group col-lg-3">
-			    <input type="number" placeholder="ZIP" class="form-control" name="fromAddressZip" ng-model="fromAddress.zip" required ng-blur="validateFormAndPost()">
+			    <input type="number" placeholder="ZIP" class="form-control" name="fromAddressZip" ng-model="fromAddress.zip" ng-minlength=5 ng-maxlength=10 required ng-blur="validateFormAndPost(ngFromAddress, fromAddress)">
 			  </div>
-			</div>
+			  <br><hr>
+			  <div class="form-group col-lg-12" ng-show="fromAddress.isValid == false && fromAddress.isDirty">
+					<div class="alert alert-danger">
+						<small>	Sorry, please fill in the required fields.</small>
+					</div>
+				</div>
+			  <div class="form-group col-lg-12" ng-show="fromAddress.isSaved == true">
+					<div class="alert alert-success">
+						<small>Great, we got your information!</small>
+					</div>
+				</div>
+			</form>
 			<!-- TODO: When City, State, and ZIP is added, then check for required fields on front end.
 			Then, POST Address to backend. Respond with Success (green check). -->
 		</div>
 		<!-- 3. Select your recipients (individual or upload) -->
 		<div class="row">
 			<div class="page-header">
-				<h2>3. To Address</h2>
+				<h2>3. Add Recipient Address</h2>
 			</div>
 			<div class="col-lg-6 form-group">
 			  <div class="form-group col-lg-12">
@@ -162,7 +173,7 @@
 			    <input type="text" placeholder="Street Address Line 1" class="form-control" name="toAddressStreet1" ng-model="toAddress.street1" required>
 			  </div>
 			  <div class="form-group col-lg-12">
-			    <input type="text" placeholder="Street Address Line 2" class="form-control" name="toAddressStreet2" ng-model="toAddress.street2">
+			    <input type="text" placeholder="Street Address Line 2 (optional)" class="form-control" name="toAddressStreet2" ng-model="toAddress.street2">
 			  </div>
 			  <div class="form-group col-lg-6">
 			    <input type="text" placeholder="City" class="form-control" name="toAddressCity" ng-model="toAddress.city" required>
@@ -174,6 +185,12 @@
 			    <input type="number" placeholder="ZIP" class="form-control" name="toAddressZip" ng-model="toAddress.zip" required ng-blur="validateFormAndPost()">
 			  </div>
 			</div>
+			<div class="col-lg-6 form-group">
+				<div class="well">
+					<h4>Sending to multiple contacts?</h4>
+					<small>Upload a CSV file here with these headers: <i>"Name", "AddressLine1", "AddressLine2", "City", "State", "ZIP"</i>.</small>
+				</div>
+			</div>
 			<!-- TODO: Same as Step 2. -->
 			<!-- TODO: Add Upload as CSV (need to figure out the best way to do this; email Lob?) -->
 			<!-- TODO: Add address verification (figure out how the UI for this is) -->
@@ -184,27 +201,26 @@
 				<h2>4. Check out and send</h2>
 			</div>
 			<!-- Dynamically generate a receipt here. -->
-			<div class="row">
-				<div class="col-lg-6">
-					<table class="table">
-						<thead>
-							<tr>
-								<th>Item</th>
-								<th>Quantity</th>
-								<th>Price</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<th>Filename.pdf</th>
-								<th>2,000</th>
-								<th>$800</th>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<!-- TODO: Dynamically update this based on Price. -->
+			
+			<div class="col-lg-6">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Item</th>
+							<th>Quantity</th>
+							<th>Price</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th>Filename.pdf</th>
+							<th>2,000</th>
+							<th>$800</th>
+						</tr>
+					</tbody>
+				</table>
 			</div>
+				<!-- TODO: Dynamically update this based on Price. -->
 
 			<div class="col-lg-6">
 				<span class="payment-errors"></span>
@@ -218,7 +234,7 @@
 		    	<input type="number" name="creditCardMm" ng-minlength=2 ng-maxlength=2 placeholder="MM" class="form-control" ng-model="creditCard.mm" required>
 			  </div>
 			  <div class="form-group col-lg-6">
-		    	<input type="number" name="creditCardYyyy" ng-maxlength=4 ng-maxlength=4 placeholder="YYYY" class="form-control" ng-model="creditCard.yyyy" required>
+		    	<input type="number" name="creditCardYyyy" ng-minlength=4 ng-maxlength=4 placeholder="YYYY" class="form-control" ng-model="creditCard.yyyy" required>
 			  </div>
 			  <div class="form-group col-lg-10">
   				<button type="button" class="btn btn-primary">Pay and Send!</button>

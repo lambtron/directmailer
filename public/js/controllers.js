@@ -6,8 +6,18 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
     // When landing on the page, check session history to see if user is logged in.
 
     // Initialize variables needed.
-    $scope.$file = {};
-    $scope.fromAddress = {};
+    var fromAddress = $scope.fromAddress = {
+    	type: 'from',
+    	name: '',
+    	street1: '',
+    	street2: '',
+    	city: '',
+    	state: '',
+    	zip: '',
+    	isValid: false,
+    	isSaved: false,
+    	isDirty: false
+    };
     $scope.toAddress = {};
     $scope.creditCard = {};
 
@@ -27,13 +37,31 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
     	removeAfterUpload: false
     });
 
-    // Register handlers for our file uploader.
+    $scope.validateField = function(field) {
 
-    $scope.validateFormAndPost = function() {
-    	// Validate the form fields.
+    }
 
-    	// Check if the form fields are blank.
-    	console.log($scope.fromAddress);
+    $scope.validateFormAndPost = function(form, ngModelObj) {
+    	console.log(form);
+			ngModelObj.isValid = form.$valid;
+			ngModelObj.isDirty = form.$dirty;
+
+			if (form.$valid && form.$dirty) {
+				// Send POST request to server.
+				$http.post('/api/address', ngModelObj)
+					.success(function(data) {
+						ngModelObj.isSaved = 'true';
+					})
+					.error(function(data) {
+						// Error.
+						console.log('Error: ' + data);
+					});
+			};
     };
 
+    $scope.validateAndPostSenderInfo = function() {
+    	// Validate Sender Info form.
+    	// Make sure all req fields are  
+    	formAddress.formAddressName.$dirty && formAddress.formAddressName.$valid
+    };
 }]);
