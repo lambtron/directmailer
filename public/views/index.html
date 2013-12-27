@@ -153,7 +153,7 @@
 				</div>
 			  <div class="form-group col-lg-12" ng-show="fromAddress.isSaved == true">
 					<div class="alert alert-success">
-						<small>Great, we got your information!</small>
+						<small> Great, we got your information!</small>
 					</div>
 				</div>
 			</form>
@@ -165,7 +165,7 @@
 			<div class="page-header">
 				<h2>3. Add Recipient Address</h2>
 			</div>
-			<div class="col-lg-6 form-group">
+			<form class="form-group col-lg-6" name="ngToAddress">
 			  <div class="form-group col-lg-12">
 		    	<input type="text" placeholder="Name" class="form-control" name="toAddressName" ng-model="toAddress.name" required>
 			  </div>
@@ -182,19 +182,37 @@
 			    <input type="text" placeholder="State" class="form-control" name="toAddressState" ng-model="toAddress.state" required>
 			  </div>
 			  <div class="form-group col-lg-3">
-			    <input type="number" placeholder="ZIP" class="form-control" name="toAddressZip" ng-model="toAddress.zip" required ng-blur="validateFormAndPost()">
+			    <input type="number" placeholder="ZIP" class="form-control" name="toAddressZip" ng-model="toAddress.zip" required ng-blur="validateFormAndPost(ngToAddress,toAddress)">
 			  </div>
-			</div>
+			  <br><hr>
+			  <div class="form-group col-lg-12" ng-show="toAddress.isValid == false && toAddress.isDirty">
+					<div class="alert alert-danger">
+						<small>	Sorry, please fill in the required fields.</small>
+					</div>
+				</div>
+			  <div class="form-group col-lg-12" ng-show="toAddress.isSaved == true">
+					<div class="alert alert-success">
+						<small> Great, we got the information!</small>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="row">
+			<hr>
 			<div class="col-lg-6 form-group">
-				<div class="well">
-					<h4>Sending to multiple contacts?</h4>
-					<small>Upload a CSV file here with these headers: <i>"Name", "AddressLine1", "AddressLine2", "City", "State", "ZIP"</i>.</small>
+				<h4>Sending to multiple contacts?</h4>
+				<div class="form-group col-lg-12">
+					<div class="well drop-zone" ng-show="uploader.hasHTML5" ng-file-drop ng-file-over="ng-file-over-green">
+						Drag here (or upload below) a CSV file with these headers: <i>"Name", "AddressLine1", "AddressLine2", "City", "State", "ZIP"</i>.
+					</div>
+					<input id="addressfile" name="toaddressbutton" class="input-file" type="file" ng-file-select>
 				</div>
 			</div>
+		</div>
 			<!-- TODO: Same as Step 2. -->
 			<!-- TODO: Add Upload as CSV (need to figure out the best way to do this; email Lob?) -->
 			<!-- TODO: Add address verification (figure out how the UI for this is) -->
-		</div>
 		<!-- 4. Check out! Get your credit card. -->
 		<div class="row">
 			<div class="page-header">
@@ -237,7 +255,7 @@
 		    	<input type="number" name="creditCardYyyy" ng-minlength=4 ng-maxlength=4 placeholder="YYYY" class="form-control" ng-model="creditCard.yyyy" required>
 			  </div>
 			  <div class="form-group col-lg-10">
-  				<button type="button" class="btn btn-primary">Pay and Send!</button>
+  				<button type="button" class="btn btn-primary" ng-disable="">Pay and Send!</button>
   			</div>
   			<!-- After submitting, take to new page; send receipt email and page with registration
   			and tracking information. -->

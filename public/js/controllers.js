@@ -18,8 +18,28 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
     	isSaved: false,
     	isDirty: false
     };
-    $scope.toAddress = {};
-    $scope.creditCard = {};
+    $scope.toAddress = {	// This will be overridden if user selects multiple upload.
+    	type: 'to',
+    	name: '',
+    	street1: '',
+    	street2: '',
+    	city: '',
+    	state: '',
+    	zip: '',
+    	isValid: false,
+    	isSaved: false,
+    	isDirty: false
+    };
+    $scope.creditCard = {
+    	type: 'creditCard',
+    	number: '',
+    	cvc: '',
+    	mm: '',
+    	yyyy: '',
+    	isValid: false,
+    	isSaved: false,
+    	isDirty: false
+    };
 
     // TODO: Check session history
 
@@ -37,12 +57,7 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
     	removeAfterUpload: false
     });
 
-    $scope.validateField = function(field) {
-
-    }
-
     $scope.validateFormAndPost = function(form, ngModelObj) {
-    	console.log(form);
 			ngModelObj.isValid = form.$valid;
 			ngModelObj.isDirty = form.$dirty;
 
@@ -59,9 +74,8 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
 			};
     };
 
-    $scope.validateAndPostSenderInfo = function() {
-    	// Validate Sender Info form.
-    	// Make sure all req fields are  
-    	formAddress.formAddressName.$dirty && formAddress.formAddressName.$valid
-    };
+    $scope.generateStripeToken = function() {
+    	// Upon submit, we will send the $scope.creditCard object to Stripe, which will generate
+    	// a token.
+    }
 }]);
