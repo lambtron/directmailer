@@ -17,6 +17,6 @@ directMailer.directive('dmStripeForm', ['$window', function($window) {
 					button.prop('disabled', false);
 				});
 			});
-		};
+		}
 	};
 }]);
