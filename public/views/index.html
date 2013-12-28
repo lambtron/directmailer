@@ -41,7 +41,7 @@
 	  </div>
 
 	  <!-- Collect the nav links, forms, and other content for toggling -->
-	  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	  <div class="collapse navbar-collapse">
 	    <ul class="nav navbar-nav navbar-right">
 	      <li><a href="#">Link</a></li>
 	    </ul>
@@ -61,19 +61,19 @@
 			  <h2>1. Upload your document</h2>
 			</div>
 			<div class="col-lg-6">
-				<div class="form-group col-lg-12" ng-show="uploader.queue == 0">
-					<div class="well drop-zone" ng-show="uploader.hasHTML5" ng-file-drop ng-file-over="ng-file-over-green">
+				<div class="form-group col-lg-12" ng-show="pdf.uploader.queue == 0">
+					<div class="well drop-zone" ng-show="pdf.uploader.hasHTML5" ng-file-drop ng-file-over="ng-file-over-green">
 						Drag your file here
 					</div>
 	      	<input id="filebutton" name="filebutton" class="input-file" type="file" required ng-file-select>
 	      </div>
 	      <div class="form-group col-lg-12">
 			    <label class="radio">
-			      <input type="radio" name="radios" value="black-and-white" checked="checked">
+			      <input type="radio" name="radios" value=false checked="checked" ng-change="pdf.getId()" ng-model="pdf.isColor">
 			      Black and white ($2)
 			    </label>
 			    <label class="radio">
-			      <input type="radio" name="radios" value="color">
+			      <input type="radio" name="radios" value=true ng-change="pdf.getId()" ng-model="pdf.isColor">
 			      Color ($3)
 			    </label>
 				</div>
@@ -84,38 +84,40 @@
 	    			<thead>
 	    				<tr>
 	    					<th width="50%">Name</th>
-	    					<th ng-show="uploader.hasHTML5">Size</th>
-	    					<th ng-show="uploader.hasHTML5">Progress</th>
-	    					<th>Success</th>
+	    					<th ng-show="pdf.uploader.hasHTML5">Size</th>
+	    					<th ng-show="pdf.uploader.hasHTML5">Progress</th>
 	    					<th>Remove</th>
 	    				</tr>
 	    			</thead>
 	    			<tbody>
-	    				<tr ng-show="uploader.queue == 0">
+	    				<tr ng-show="pdf.uploader.queue == 0">
 	    					<td><i><small>You haven't uploaded a file yet!</smalL></i></td>
 	    					<td></td>
 	    					<td></td>
 	    					<td></td>
-	    					<td></td>
 	    				</tr>
-	    				<tr ng-repeat="item in uploader.queue">
+	    				<tr ng-repeat="item in pdf.uploader.queue">
 	    					<td><strong>{{ item.file.name }}</strong></td>
-	    					<td ng-show="uploader.hasHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
-	    					<td ng-show="uploader.hasHTML5">
+	    					<td ng-show="pdf.uploader.hasHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
+	    					<td ng-show="pdf.uploader.hasHTML5">
 	    						<div class="progress" style="margin-bottom: 0;">
 	    							<div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
 	    						</div>
 	    					</td>
-	    					<td>
-	    						<div ng-show="item.isSuccess"></div>
-	    					</td>
 	    					<td nowrap>
-	    						<button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+	    						<button type="button" class="btn btn-danger btn-xs" ng-click="pdf.remove(item)">
 	    							Remove
 	    						</button>
 	    					</td>
 	    				</tr>
+	    			</tbody>
 	    		</table>
+  				<div class="alert alert-danger" ng-show="pdf.isValid == false && pdf.isDirty">
+						<small>{{pdf.err}}</small>
+					</div>
+  				<div class="alert alert-success" ng-show="pdf.isSaved">
+						<small> Great, we got your information!</small>
+					</div>
 	    	</div>
 	    </div>
 	    <!-- TODO: Use Angular to provide a PDF preview when the pdf is uploaded. -->
@@ -204,7 +206,7 @@
 				<h4>Sending to multiple contacts?</h4>
 				<br>
 				<div class="form-group col-lg-12">
-					<div class="well drop-zone" ng-show="uploader.hasHTML5" ng-file-drop ng-file-over="ng-file-over-green">
+					<div class="well drop-zone" ng-show="pdf.uploader.hasHTML5" ng-file-drop ng-file-over="ng-file-over-green">
 						Drag here (or upload below) a CSV file with these headers: <i>"Name", "AddressLine1", "AddressLine2", "City", "State", "ZIP"</i>.
 					</div>
 					<input id="addressfile" name="toaddressbutton" class="input-file" type="file" ng-file-select>

@@ -11,7 +11,88 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
     	fromAddressId: '',
     	toAddressId: '',
     	isReady: false		// Only ready when all of the properties are filled and valid.
-    }
+    };
+    var pdf = $scope.pdf = {
+    	name: '',
+    	file: '',
+    	isColor: false,
+    	isSaved: false,
+    	isDirty: false,
+    	isValid: false,
+    	err: 'Sorry, something went wrong. Please try again!',
+    	getId: function() {
+    		// If filename and path exists (means file already submitted once,
+    		// then submit a POST request.
+    		if (this.name.length > 0 && this.file.length > 0) {
+    			var obj = {};
+    			obj.name = this.name;
+    			obj.file = this.file;
+    			if (this.isColor) {
+    				obj.setting_id = 101;
+    			} else {
+    				obj.setting_id = 100;
+    			}
+    			// Submit POST request.
+                this.isSaved = false;
+    			$http.post('/api/file', obj)
+    				.success(function(data) {
+
+                        if (typeof data[0] === "undefined") {
+                            // No error.
+                            lob.object = data.id;
+                            pdf.isSaved = true;
+                            pdf.isValid = true;
+                        } else {
+                            // Error.
+                            pdf.err = data[0].message;
+                            pdf.isSaved = false;
+                            pdf.isValid = false;
+                        };
+
+    					console.log(data);
+    				})
+    				.error(function(data) {
+    					console.log(data);
+    				});
+    		};
+    	},
+    	uploader: $scope.uploader = $fileUploader.create({
+	    	scope: $scope,			// to automatically update the HTML. Default: $rootScope
+	    	url: '/api/file',
+	    	autoUpload: true,
+	    	removeAfterUpload: false
+	    })
+	    .bind('success', function (event, xhr, item, response) {
+	      // console.log('Success', xhr, item, response);
+	      console.log(response);
+	      if (typeof response[0] === 'undefined') {
+	      	// Success.
+	      	lob.object = response.id;
+	      	pdf.file = response.file;
+	      	pdf.name = response.name;
+	      	pdf.isSaved = true;
+	      	pdf.isValid = true;
+	      } else {
+	      	// Lob related error.
+	      	console.log(response[0].message);
+	      	pdf.err = response[0].message;
+	      	pdf.file = '';
+	      	pdf.name = '';
+	      	pdf.isSaved = false;
+	      	pdf.isValid = false;
+	      };
+	    })
+	    .bind('error', function (event, xhr, item, response) {
+	      console.info('Error', xhr, item, response);
+	    }),
+    	remove: function(item) {
+    		item.remove();	// Reset everything if the user decides to remove the item.
+    		this.isSaved = false;
+    		this.isDirty = false;
+    		this.isValid = false;
+    		lob.object = '';
+    	}
+    };
     var fromAddress = $scope.fromAddress = {
     	type: 'from',
     	name: '',
@@ -50,12 +131,7 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
     // TODO: POST ALL THE THINGS!
 
     // Create a file uploader with options.
-    var uploader = $scope.uploader = $fileUploader.create({
-    	scope: $scope,			// to automatically update the HTML. Default: $rootScope
-    	url: '/api/file',
-    	autoUpload: true,
-    	removeAfterUpload: false
-    });
+    // pdf.uploader.formData = [1,2,3,4];
 
     // Generate address IDs
     $scope.getAddressId = function(addressObj) {
@@ -71,10 +147,12 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
 							lob.fromAddressId = data.id;
 						};
 						addressObj.isSaved = true;
+                        addressObj.isValid = true;
 					} else {
 						// Error.
 						addressObj.err = data[0].message;
 						addressObj.isValid = false;
+                        addressObj.isSaved = false;
 					};
 
 					console.log(addressObj);

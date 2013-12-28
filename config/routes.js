@@ -22,8 +22,31 @@ module.exports = function(app) {
 		// Store in Mongoose (assign it hash generated for the user. User redeems hash by registering
 		// via email.)
 		console.log(req);
-		// res.send('200');
-		// Return to Angular the Lob file object ID.
+
+		var obj = {};
+
+		// if req.body = {}, then it is File Uploader request.
+		if (_.isEmpty(req.body)) {
+			obj.name = req.files.file.name;
+			obj.file = req.files.file.path;
+			obj.setting_id = 100;
+		} else {
+			obj.name = req.body.name;
+			obj.file = req.body.file;
+			obj.setting_id = req.body.setting_id;
+		};
+
+		Lob.createObject(obj, function(err, data) {
+			if (err) {
+				console.log('Error (lob): ');
+				console.log(err);
+				res.send(err);
+			} else {
+				data.file = obj.file.path;
+				console.log(data);
+				res.send(data);
+			};
+		});
 	});
 
 	// Get request from Angular, submit request to Lob.

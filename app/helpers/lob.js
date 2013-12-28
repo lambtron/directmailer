@@ -14,8 +14,12 @@ module.exports = {
 	// - double sided (optional)
 	createObject: function(obj, cb) {
 		obj.name = (typeof obj.name === "undefined") ? "" : obj.name;
+		obj.file = (typeof obj.file === "undefined") ? "testFilePath" : obj.file;
 		obj.quantity = (typeof obj.quantity === "undefined") ? 1 : obj.quantity;
-		obj.double_sided = (typeof obj.double_sided === "undefined") ? true : obj.double_sided;
+		obj.double_sided = (typeof obj.double_sided === "undefined") ? 1 : obj.double_sided;
+		if (obj.file[0] != '@') {
+			obj.file = '@' + obj.file;
+		};
 		LOB.objects.create(obj, function(err, data) {
 			cb(err, data);
 		});
