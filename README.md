@@ -1,4 +1,4 @@
-Chat
+Direct Mailer
 ====
 
-Web based SMS app.
+Web based snail mail app.
