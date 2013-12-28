@@ -15,25 +15,22 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
   var pdf = $scope.pdf = {
   	name: '',
   	file: '',
-  	isColor: false,
+    settingId: 100,
   	isSaved: false,
   	isDirty: false,
   	isValid: false,
   	err: 'Sorry, something went wrong. Please try again!',
   	getId: function() {
-  		// If filename and path exists (means file already submitted once,
-  		// then submit a POST request.
+      // If filename and path exists (means file already submitted once,
+      // then submit a POST request.
   		if (this.name.length > 0 && this.file.length > 0) {
   			var obj = {};
   			obj.name = this.name;
   			obj.file = this.file;
-  			if (this.isColor) {
-  				obj.setting_id = 101;
-  			} else {
-  				obj.setting_id = 100;
-  			}
-  			// Submit POST request.
+        obj.setting_id = this.settingId;
+
         this.isSaved = false;
+  			// Submit POST request.
   			$http.post('/api/file', obj)
   				.success(function(data) {
 
@@ -52,7 +49,7 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
 					console.log(data);
 				})
 				.error(function(data) {
-  					console.log(data);
+					console.log('Error: ' + data);
 				});
   		};
   	},
@@ -60,8 +57,7 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
     	scope: $scope,			// to automatically update the HTML. Default: $rootScope
     	url: '/api/file',
     	autoUpload: true,
-    	removeAfterUpload: false,
-          headers: {'setting_id': pdf.setting_id}
+    	removeAfterUpload: false
     })
     .bind('success', function (event, xhr, item, response) {
       // console.log('Success', xhr, item, response);
@@ -123,20 +119,19 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
   	err: 'Sorry, please fill in the required fields.'
   };
 
+  pdf.uploader.headers = {'setting_id': pdf.settingId};
   // TODO: Check session history
 
   // TODO: If existing user and signed in, then retrieve relevant info.
 
   // TODO: If new user, just show landing page!
 
-  // TODO: POST ALL THE THINGS!
-
-  // Create a file uploader with options.
-
   // Generate address IDs
   $scope.getAddressId = function(addressObj) {
   	// This function will POST the addressObj to the Node API. We expect a Lob address ID
   	// as a successful response.
+    console.log(addressObj);
+
 		$http.post('/api/address', addressObj)
 			.success(function(data) {
 			if (typeof data[0] === "undefined") {
@@ -147,12 +142,12 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
 					lob.fromAddressId = data.id;
 				};
 				addressObj.isSaved = true;
-                    addressObj.isValid = true;
+        addressObj.isValid = true;
 			} else {
 				// Error.
 				addressObj.err = data[0].message;
 				addressObj.isValid = false;
-                    addressObj.isSaved = false;
+        addressObj.isSaved = false;
 			};
 
 			console.log(addressObj);

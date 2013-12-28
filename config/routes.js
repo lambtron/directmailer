@@ -21,19 +21,21 @@ module.exports = function(app) {
 	app.post('/api/file', function(req, res) {
 		// Store in Mongoose (assign it hash generated for the user. User redeems hash by registering
 		// via email.)
+
 		console.log(req);
 
 		var obj = {};
+		var file = '';
 
 		// if req.body = {}, then it is File Uploader request.
 		if (_.isEmpty(req.body)) {
-			obj.name = req.files.file.name;
-			obj.file = req.files.file.path;
-			obj.setting_id = 100;
+			obj.name = req.files.file.name || '';
+			file = obj.file = req.files.file.path || '';
+			obj.setting_id = req.headers.setting_id || 100;
 		} else {
-			obj.name = req.body.name;
-			obj.file = req.body.file;
-			obj.setting_id = req.body.setting_id;
+			obj.name = req.body.name || '';
+			file = obj.file = req.body.file || '';
+			obj.setting_id = req.body.setting_id || 100;
 		};
 
 		Lob.createObject(obj, function(err, data) {
@@ -42,14 +44,16 @@ module.exports = function(app) {
 				console.log(err);
 				res.send(err);
 			} else {
-				data.file = obj.file.path;
+				data.file = file;
 				console.log(data);
 				res.send(data);
 			};
 		});
+
+		// Store in mongoose with unique ID.
 	});
 
-	// Get request from Angular, submit request to Lob.
+	// Submit request to Lob.
 	app.post('/api/address', function(req, res) {
 		console.log(req.body);
 		// Parse request. Is this a TO or a FROM address? Is this an Array?
