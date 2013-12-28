@@ -1,4 +1,4 @@
-use 'strict'
+// use 'strict';
 
 // Set the Lob API credentials.
 var LOB = new (require('lob')) (process.env.LOB_API_KEY);
@@ -16,8 +16,8 @@ module.exports = {
 		obj.name = (typeof obj.name === "undefined") ? "" : obj.name;
 		obj.quantity = (typeof obj.quantity === "undefined") ? 1 : obj.quantity;
 		obj.double_sided = (typeof obj.double_sided === "undefined") ? true : obj.double_sided;
-		LOB.objects.create(obj, function(err, res) {
-			cb(err, res);
+		LOB.objects.create(obj, function(err, data) {
+			cb(err, data);
 		});
 	},
 	// Create an address (POST).
@@ -40,8 +40,8 @@ module.exports = {
 		for (var i = 0; i < missingKeys.length; i ++) {
 			addressObj[missingKeys[i]] = "";
 		}
-		LOB.addresses.create(addressObj, function(err, res) {
-			cb(err, res);
+		LOB.addresses.create(addressObj, function(err, data) {
+			cb(err, data);
 		});
 	},
 	// Verify an Address.
@@ -56,8 +56,8 @@ module.exports = {
 		for (var i = 0; i < missingKeys.length; i ++) {
 			addressObj[missingKeys[i]] = "";
 		}
-		LOB.addresses.verify(addressObj, function(err, res) {
-			cb(err, res);
+		LOB.addresses.verify(addressObj, function(err, data) {
+			cb(err, data);
 		});
 	},
 	// Create a Job (send the mail!)
@@ -74,8 +74,8 @@ module.exports = {
 		for (var i = 0; i < missingKeys.length; i ++) {
 			jobObj[missingKeys[i]] = "";
 		}
-		LOB.jobs.create(jobObj, function(err, res) {
-			cb(err, res);
+		LOB.jobs.create(jobObj, function(err, data) {
+			cb(err, data);
 		});
 	}
-}
+};

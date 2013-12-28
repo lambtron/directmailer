@@ -10,9 +10,10 @@ require('../app/models/user');
 /**
  * Module dependencies =============================================================================
  */
-var mongoose = require('mongoose')
+var _ = require('underscore')
+	, mongoose = require('mongoose')
 	, User = mongoose.model('User')
-	, _ = require('underscore');
+	, Lob = require('../app/helpers/lob');
 
 // Public functions. ===============================================================================
 module.exports = function(app) {
@@ -22,6 +23,26 @@ module.exports = function(app) {
 		// via email.)
 		console.log(req);
 		// res.send('200');
+		// Return to Angular the Lob file object ID.
+	});
+
+	// Get request from Angular, submit request to Lob.
+	app.post('/api/address', function(req, res) {
+		console.log(req.body);
+		// Parse request. Is this a TO or a FROM address? Is this an Array?
+		var addressObj = _.pick(req.body, 'name', 'email', 'phone', 'address_line1', 'address_line2',
+			'address_city', 'address_state', 'address_zip', 'address_country');
+		Lob.createAddress(addressObj, function(err, data) {
+			if (err) {
+				console.log('Error (lob): ');
+				console.log(err);
+				res.send(err);
+			} else {
+				data.type = req.body.type;
+				console.log(data);
+				res.send(data);
+			};
+		});
 	});
 
 	// POST check out.

@@ -131,24 +131,24 @@
 		    	<input type="text" placeholder="Name" class="form-control" name="fromAddressName" ng-model="fromAddress.name" required>
 			  </div>
 			  <div class="form-group col-lg-12">
-			    <input type="text" placeholder="Street Address Line 1" class="form-control" name="fromAddressStreet1" ng-model="fromAddress.street1" required>
+			    <input type="text" placeholder="Street Address Line 1" class="form-control" name="fromAddressStreet1" ng-model="fromAddress.address_line1" required>
 			  </div>
 			  <div class="form-group col-lg-12">
-			    <input type="text" placeholder="Street Address Line 2 (optional)" class="form-control" name="fromAddressStreet2" ng-model="fromAddress.street2">
+			    <input type="text" placeholder="Street Address Line 2 (optional)" class="form-control" name="fromAddressStreet2" ng-model="fromAddress.address_line2">
 			  </div>
 			  <div class="form-group col-lg-6">
-			    <input type="text" placeholder="City" class="form-control" name="fromAddressCity" ng-model="fromAddress.city" required>
+			    <input type="text" placeholder="City" class="form-control" name="fromAddressCity" ng-model="fromAddress.address_city" required>
 			  </div>
 			  <div class="form-group col-lg-3">
-			    <input type="text" placeholder="State" class="form-control" name="fromAddressState" ng-model="fromAddress.state" required ng-minlength=2>
+			    <input type="text" placeholder="State" class="form-control" name="fromAddressState" ng-model="fromAddress.address_state" required ng-minlength=2>
 			  </div>
 			  <div class="form-group col-lg-3">
-			    <input type="number" placeholder="ZIP" class="form-control" name="fromAddressZip" ng-model="fromAddress.zip" ng-minlength=5 ng-maxlength=10 required ng-blur="validateFormAndPost(ngFromAddress, fromAddress)">
+			    <input type="number" placeholder="ZIP" class="form-control" name="fromAddressZip" ng-model="fromAddress.address_zip" ng-minlength=5 ng-maxlength=10 required ng-blur="validateFormAndPost(ngFromAddress, fromAddress, getAddressId)">
 			  </div>
 			  <br><hr>
 			  <div class="form-group col-lg-12" ng-show="fromAddress.isValid == false && fromAddress.isDirty">
 					<div class="alert alert-danger">
-						<small>	Sorry, please fill in the required fields.</small>
+						<small>{{fromAddress.err}}</small>
 					</div>
 				</div>
 			  <div class="form-group col-lg-12" ng-show="fromAddress.isSaved == true">
@@ -170,19 +170,19 @@
 		    	<input type="text" placeholder="Name" class="form-control" name="toAddressName" ng-model="toAddress.name" required>
 			  </div>
 			  <div class="form-group col-lg-12">
-			    <input type="text" placeholder="Street Address Line 1" class="form-control" name="toAddressStreet1" ng-model="toAddress.street1" required>
+			    <input type="text" placeholder="Street Address Line 1" class="form-control" name="toAddressStreet1" ng-model="toAddress.address_line1" required>
 			  </div>
 			  <div class="form-group col-lg-12">
-			    <input type="text" placeholder="Street Address Line 2 (optional)" class="form-control" name="toAddressStreet2" ng-model="toAddress.street2">
+			    <input type="text" placeholder="Street Address Line 2 (optional)" class="form-control" name="toAddressStreet2" ng-model="toAddress.address_line2">
 			  </div>
 			  <div class="form-group col-lg-6">
-			    <input type="text" placeholder="City" class="form-control" name="toAddressCity" ng-model="toAddress.city" required>
+			    <input type="text" placeholder="City" class="form-control" name="toAddressCity" ng-model="toAddress.address_city" required>
 			  </div>
 			  <div class="form-group col-lg-3">
-			    <input type="text" placeholder="State" class="form-control" name="toAddressState" ng-model="toAddress.state" required>
+			    <input type="text" placeholder="State" class="form-control" name="toAddressState" ng-model="toAddress.address_state" required>
 			  </div>
 			  <div class="form-group col-lg-3">
-			    <input type="number" placeholder="ZIP" class="form-control" name="toAddressZip" ng-model="toAddress.zip" required ng-blur="validateFormAndPost(ngToAddress,toAddress)">
+			    <input type="number" placeholder="ZIP" class="form-control" name="toAddressZip" ng-model="toAddress.address_zip" required ng-blur="validateFormAndPost(ngToAddress,toAddress,getAddressId)">
 			  </div>
 			  <br><hr>
 			  <div class="form-group col-lg-12" ng-show="toAddress.isValid == false && toAddress.isDirty">
@@ -241,26 +241,26 @@
 			</div>
 				<!-- TODO: Dynamically update this based on Price. -->
 
-			<div class="col-lg-6">
+			<form class="col-lg-6 dmStripeForm" name="ngCreditCard">
 				<span class="payment-errors"></span>
 			  <div class="form-group col-lg-12">
-		    	<input type="number" name="creditCardNumber" placeholder="Card Number" class="form-control" ng-model="creditCard.number" required>
+		    	<input type="number" name="number" placeholder="Card Number" class="form-control" data-stripe="number" required>
 			  </div>
 			  <div class="form-group col-lg-3">
-		    	<input type="number" name="creditCardCvc" placeholder="CVC" class="form-control" ng-model="creditCard.cvc" required>
+		    	<input type="number" name="cvc" placeholder="CVC" class="form-control" data-stripe="cvc" required>
 			  </div>
 			  <div class="form-group col-lg-3">
-		    	<input type="number" name="creditCardMm" ng-minlength=2 ng-maxlength=2 placeholder="MM" class="form-control" ng-model="creditCard.mm" required>
+		    	<input type="number" name="exp-month" ng-minlength=2 ng-maxlength=2 placeholder="MM" class="form-control" data-stripe="exp-month" required>
 			  </div>
 			  <div class="form-group col-lg-6">
-		    	<input type="number" name="creditCardYyyy" ng-minlength=4 ng-maxlength=4 placeholder="YYYY" class="form-control" ng-model="creditCard.yyyy" required>
+		    	<input type="number" name="exp-year" ng-minlength=4 ng-maxlength=4 placeholder="YYYY" class="form-control" data-stripe="exp-year" required>
 			  </div>
 			  <div class="form-group col-lg-10">
   				<button type="button" class="btn btn-primary" ng-disable="">Pay and Send!</button>
   			</div>
   			<!-- After submitting, take to new page; send receipt email and page with registration
   			and tracking information. -->
-			</div>
+			</form>
 		</div>
 		<!-- 5. Track your mail! Get email updates by signing up -->
 		<div class="row">
