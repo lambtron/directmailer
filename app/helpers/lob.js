@@ -13,10 +13,10 @@ module.exports = {
 	// - quantity (optional, defaults to 1)
 	// - double sided (optional)
 	createObject: function(obj, cb) {
-		obj.name = (typeof obj.name === "undefined") ? "" : obj.name;
-		obj.file = (typeof obj.file === "undefined") ? "testFilePath" : obj.file;
-		obj.quantity = (typeof obj.quantity === "undefined") ? 1 : obj.quantity;
-		obj.double_sided = (typeof obj.double_sided === "undefined") ? 1 : obj.double_sided;
+		obj.name = obj.name || "";
+		obj.file = obj.file || "filepath";
+		obj.quantity = obj.quantity || 1;
+		obj.double_sided = obj.double_sided || 1;
 		if (obj.file[0] != '@') {
 			obj.file = '@' + obj.file;
 		};
@@ -36,6 +36,7 @@ module.exports = {
 	// - address_country (req)
 	// TODO: pass an obj with the parameters as key:value pairs.
 	createAddress: function(addressObj, cb) {
+		// Check if Array.
 		var keys = _.keys(addressObj);
 		var totalKeys = ["name", "email", "phone", "address_line1", "address_line2", "address_city", 
 			"address_state", "address_zip", "address_country"];
@@ -43,7 +44,8 @@ module.exports = {
 		// Set default values for the missing keys.
 		for (var i = 0; i < missingKeys.length; i ++) {
 			addressObj[missingKeys[i]] = "";
-		}
+		};
+		// This can be an array.
 		LOB.addresses.create(addressObj, function(err, data) {
 			cb(err, data);
 		});
@@ -72,7 +74,7 @@ module.exports = {
 	// - rest are opt
 	sendJob: function(jobObj, cb) {
 		var keys = _.keys(jobObj);
-		var totalKeys = ["to", "from", "object1", "name"];
+		var totalKeys = ["to", "from", "object1"];
 		var missingKeys = _.difference(keys, totalKeys);
 		// Set default values for the missing keys.
 		for (var i = 0; i < missingKeys.length; i ++) {

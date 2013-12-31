@@ -7,10 +7,49 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
 
   // Initialize variables needed.
   var lob = $scope.lob = {
+    name: 'test',
   	object: '',
   	fromAddressId: '',
-  	toAddressId: '',
-  	isReady: false		// Only ready when all of the properties are filled and valid.
+    toAddresses: [], // be all addressIds
+    isReady: false,
+  	setReadiness: function() {      // Only ready when all of the properties are filled and valid.
+      if(this.object.length > 0 && this.fromAddressId.length > 0 && 
+        toAddresses.addresses.length > 0 ) {
+        this.isReady = true;
+        return true;
+      } else {
+        this.isReady = false;
+        return false;
+      };
+    },
+    price: 0,
+    calculatePrice: function() {
+      console.log('testing price');
+      console.log(this);
+
+      if(this.setReadiness()) {
+        this.err = '';
+        // If we have all of the pieces.
+        $http.post('/api/lob', this)
+          .success(function(data) {
+            if(typeof data[0] === "undefined") {
+              // Success
+              console.log(data);
+              lob.price = data.price;
+            } else {
+              // Error
+              console.log(data);
+              lob.err = data[0].message;
+            };
+          })
+          .error(function(data) {
+            console.log('Error: ' + data);
+          });
+      } else {
+        this.err = 'There are still missing components.'
+      };
+    },
+    err: ''
   };
   var pdf = $scope.pdf = {
   	name: '',
@@ -19,7 +58,7 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
   	isSaved: false,
   	isDirty: false,
   	isValid: false,
-  	err: 'Sorry, something went wrong. Please try again!',
+  	err: '',
   	getId: function() {
       // If filename and path exists (means file already submitted once,
       // then submit a POST request.
@@ -44,6 +83,7 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
             pdf.err = data[0].message;
             pdf.isSaved = false;
             pdf.isValid = false;
+            pdf.isDirty = true;
           };
 
 					console.log(data);
@@ -53,11 +93,27 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
 				});
   		};
   	},
-  	uploader: $scope.uploader = $fileUploader.create({
+  	uploader: $fileUploader.create({
     	scope: $scope,			// to automatically update the HTML. Default: $rootScope
     	url: '/api/file',
     	autoUpload: true,
-    	removeAfterUpload: false
+    	removeAfterUpload: false,
+      alias: 'pdfFile',
+      filters: [
+        function( item ) {
+          // console.log(item);
+          // Make sure it is a PDF file, as that is only allowed by Lob.
+          if (item.type.indexOf('pdf') != -1) {
+            pdf.isValid = true;
+            return true;
+          } else {
+            pdf.err = 'Sorry, you must upload a .pdf file.';
+            pdf.isValid = false;
+            console.log(pdf);
+            return false;
+          };
+        }
+      ]
     })
     .bind('success', function (event, xhr, item, response) {
       // console.log('Success', xhr, item, response);
@@ -120,6 +176,19 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
   };
 
   pdf.uploader.headers = {'setting_id': pdf.settingId};
+
+  var toAddresses = $scope.toAddresses = {
+    addresses: [],                      // array of Address objects.
+    err: '',
+    isValid: false,
+    isSaved: false,
+    isDirty: false,
+    remove: function(index) {
+      toAddresses.addresses.splice(index, 1);
+      lob.toAddresses.splice(index, 1);
+    }
+  }
+
   // TODO: Check session history
 
   // TODO: If existing user and signed in, then retrieve relevant info.
@@ -130,14 +199,14 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
   $scope.getAddressId = function(addressObj) {
   	// This function will POST the addressObj to the Node API. We expect a Lob address ID
   	// as a successful response.
-    console.log(addressObj);
 
 		$http.post('/api/address', addressObj)
 			.success(function(data) {
 			if (typeof data[0] === "undefined") {
 				// No error.
 				if (data.type == 'to') {
-					lob.toAddressId = data.id;
+          toAddresses.addresses.push(addressObj); // This address should be valid.
+          lob.toAddresses.push(data.id);
 				} else if (data.type == 'from') {
 					lob.fromAddressId = data.id;
 				};
@@ -146,6 +215,7 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
 			} else {
 				// Error.
 				addressObj.err = data[0].message;
+
 				addressObj.isValid = false;
         addressObj.isSaved = false;
 			};
@@ -160,15 +230,17 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
 
   $scope.validateFormAndPost = function(form, ngModelObj, cb) {
 		ngModelObj.isValid = form.$valid;
-		ngModelObj.isDirty = form.$dirty;
+		ngModelObj.isDirty = true;
 
-		if (form.$valid && form.$dirty) {
+		if (form.$valid) {
 			cb(ngModelObj);
 		};
   };
 
   $scope.checkLobReady = function() {
   	// This is just to check if the Lob has all of its necessary properties.
+    // Must check to see if there are multiple recipient addresses. If so, then send the array
+    // as the 'TO', otherwise, send Lob.to.
 
   };
 }]); 

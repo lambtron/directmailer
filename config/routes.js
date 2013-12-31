@@ -29,8 +29,8 @@ module.exports = function(app) {
 
 		// if req.body = {}, then it is File Uploader request.
 		if (_.isEmpty(req.body)) {
-			obj.name = req.files.file.name || '';
-			file = obj.file = req.files.file.path || '';
+			obj.name = req.files.pdfFile.name || '';
+			file = obj.file = req.files.pdfFile.path || '';
 			obj.setting_id = req.headers.setting_id || 100;
 		} else {
 			obj.name = req.body.name || '';
@@ -53,12 +53,45 @@ module.exports = function(app) {
 		// Store in mongoose with unique ID.
 	});
 
+	// Submit Lob Job.
+	app.post('/api/lob', function(req, res) {
+		console.log(req.body);
+		// .object : .object1
+		// .fromAddressId : from
+		// .toAddressId : .to
+		// .name
+
+		var job = {};
+
+		job.from = req.body.fromAddressId;
+		job.name = req.body.name;
+		job.object1 = req.body.object;
+
+		for(var i = 0; i < req.body.toAddresses.length; i++ ) {
+			job.to = req.body.toAddresses[i];
+			// Create job.
+			Lob.sendJob(job, function(err, data) {
+				if (err) {
+					console.log('Error (lob job): ');
+					console.log(err);
+					res.send(err);
+				} else {
+					console.log(data);
+					res.send(data);
+				};
+			});
+		};
+	});
+
 	// Submit request to Lob.
 	app.post('/api/address', function(req, res) {
 		console.log(req.body);
-		// Parse request. Is this a TO or a FROM address? Is this an Array?
-		var addressObj = _.pick(req.body, 'name', 'email', 'phone', 'address_line1', 'address_line2',
-			'address_city', 'address_state', 'address_zip', 'address_country');
+
+		var addressObj = {};
+
+		addressObj = _.pick(req.body, 'name', 'email', 'phone', 'address_line1',
+			'address_line2', 'address_city', 'address_state', 'address_zip', 'address_country');
+
 		Lob.createAddress(addressObj, function(err, data) {
 			if (err) {
 				console.log('Error (lob): ');

@@ -20,8 +20,9 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
 	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.5/angular.min.js"></script>
-	<script src="/lib/ngfileupload/angular-file-upload.min.js"></script>
 	<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+	<script src="/lib/angular-file-upload.min.js"></script>
+	<script type="text/javascript" src="/lib/jquery.csv-0.71.min.js"></script>
 	<script src="/public/js/app.js"></script>
 	<script src="/public/js/services.js"></script>
 	<script src="/public/js/controllers.js"></script>
@@ -63,9 +64,11 @@
 			<div class="col-lg-6">
 				<div class="form-group col-lg-12" ng-show="pdf.uploader.queue == 0">
 					<div class="well drop-zone" ng-show="pdf.uploader.hasHTML5" ng-file-drop ng-file-over="ng-file-over-green">
-						Drag your file here
+						<small>
+							Drag your file here.
+						</small>
 					</div>
-	      	<input id="filebutton" name="filebutton" class="input-file" type="file" required ng-file-select>
+	      	<input name="pdfFile" class="input-file" type="file" required ng-file-select>
 	      </div>
 	      <div class="form-group col-lg-12">
 			    <label class="radio">
@@ -90,12 +93,6 @@
 	    				</tr>
 	    			</thead>
 	    			<tbody>
-	    				<tr ng-show="pdf.uploader.queue == 0">
-	    					<td><i><small>You haven't uploaded a file yet!</smalL></i></td>
-	    					<td></td>
-	    					<td></td>
-	    					<td></td>
-	    				</tr>
 	    				<tr ng-repeat="item in pdf.uploader.queue">
 	    					<td><strong>{{ item.file.name }}</strong></td>
 	    					<td ng-show="pdf.uploader.hasHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
@@ -112,7 +109,10 @@
 	    				</tr>
 	    			</tbody>
 	    		</table>
-  				<div class="alert alert-danger" ng-show="pdf.isValid == false && pdf.isDirty">
+					<div ng-show="pdf.uploader.queue == 0" style="padding-left: 8px; padding-bottom: 20px;">
+  					<i><small>You haven't uploaded a file yet!</smalL></i>
+  				</div>
+  				<div class="alert alert-danger" ng-show="pdf.isValid == false && pdf.err.length > 0">
 						<small>{{pdf.err}}</small>
 					</div>
   				<div class="alert alert-success" ng-show="pdf.isSaved">
@@ -145,7 +145,10 @@
 			    <input type="text" placeholder="State" class="form-control" name="fromAddressState" ng-model="fromAddress.address_state" required ng-minlength=2>
 			  </div>
 			  <div class="form-group col-lg-3">
-			    <input type="number" placeholder="ZIP" class="form-control" name="fromAddressZip" ng-model="fromAddress.address_zip" ng-minlength=5 ng-maxlength=10 required ng-blur="validateFormAndPost(ngFromAddress, fromAddress, getAddressId)">
+			    <input type="number" placeholder="ZIP" class="form-control" name="fromAddressZip" ng-model="fromAddress.address_zip" ng-minlength=5 ng-maxlength=10 required>
+			  </div>
+			  <div class="form-group col-lg-12">
+			  	<div class="btn-large btn-primary btn pull-right" ng-click="validateFormAndPost(ngFromAddress,fromAddress,getAddressId)" ng-disabled="!ngFromAddress.$valid">Validate and Save</div>
 			  </div>
 			</form>
 			<div class="col-lg-6">
@@ -160,8 +163,6 @@
 					</div>
 				</div>
 			</div>
-			<!-- TODO: When City, State, and ZIP is added, then check for required fields on front end.
-			Then, POST Address to backend. Respond with Success (green check). -->
 		</div>
 		<!-- 3. Select your recipients (individual or upload) -->
 		<div class="row">
@@ -185,12 +186,42 @@
 			    <input type="text" placeholder="State" class="form-control" name="toAddressState" ng-model="toAddress.address_state" required>
 			  </div>
 			  <div class="form-group col-lg-3">
-			    <input type="number" placeholder="ZIP" class="form-control" name="toAddressZip" ng-model="toAddress.address_zip" required ng-blur="validateFormAndPost(ngToAddress,toAddress,getAddressId)">
+			    <input type="number" placeholder="ZIP" class="form-control" name="toAddressZip" ng-model="toAddress.address_zip" required>
 			  </div>
-			  <br><hr>
-			  <div class="form-group col-lg-12" ng-show="toAddress.isValid == false && toAddress.isDirty">
+			  <div class="form-group col-lg-12">
+			  	<div class="btn-large btn-primary btn pull-right" ng-click="validateFormAndPost(ngToAddress,toAddress,getAddressId)" ng-disabled="!ngToAddress.$valid">Validate and Save</div>
+			  </div>
+			</form>
+
+			<div class="col-lg-6">
+				<table class="table">
+					<thead>
+						<tr>
+							<th width="20%">Name</th>
+							<th>Address</th>
+							<th>City</th>
+							<th width="5%">State</th>
+							<th width="5%">ZIP</th>
+							<th width="5%"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="address in toAddresses.addresses track by $index">
+							<td>{{address.name}}</td>
+							<td>{{address.address_line1}} {{address.address_line2}}</td>
+							<td>{{address.address_city}}</td>
+							<td>{{address.address_state}}</td>
+							<td>{{address.address_zip}}</td>
+							<td class="" ng-click="toAddresses.remove($index)" style="cursor: pointer">x</td>
+						</tr>
+					</tbody>
+				</table>	
+				<div ng-show="toAddresses.addresses.length == 0" style="padding-left: 8px; padding-bottom: 20px">
+					<i><small>Add a recipient address and it will show up here!</small></i>
+				</div>
+	  		<div class="form-group col-lg-12" ng-show="toAddress.isValid == false && toAddress.isDirty">
 					<div class="alert alert-danger">
-						<small>	Sorry, please fill in the required fields.</small>
+						<small>{{toAddress.err}}</small>
 					</div>
 				</div>
 			  <div class="form-group col-lg-12" ng-show="toAddress.isSaved == true">
@@ -198,21 +229,26 @@
 						<small> Great, we got the information!</small>
 					</div>
 				</div>
-			</form>
+			</div>
 		</div>
-
 		<div class="row">
-			<hr>
 			<div class="col-lg-6 form-group">
+				<hr>
 				<h4>Sending to multiple contacts?</h4>
 				<br>
 				<div class="form-group col-lg-12">
-					<div class="well drop-zone" ng-show="pdf.uploader.hasHTML5" ng-file-drop ng-file-over="ng-file-over-green">
-						Drag here (or upload below) a CSV file with these headers: <i>"Name", "AddressLine1", "AddressLine2", "City", "State", "ZIP"</i>.
+					<div class="well">
+						<small>
+							Upload a CSV file below with these headers: <i>"Name", "Address_Line1", "Address_Line2", "Address_City", "Address_State", "Address_ZIP"</i>.
+						</small>
 					</div>
-					<input id="addressfile" name="toaddressbutton" class="input-file" type="file" ng-file-select>
+					<input id="address-file-upload" name="addressFiles" class="input-file" type="file">
 				</div>
 			</div>
+		</div>
+
+		<div class="row">
+
 		</div>
 			<!-- TODO: Same as Step 2. -->
 			<!-- TODO: Add Upload as CSV (need to figure out the best way to do this; email Lob?) -->
@@ -228,19 +264,30 @@
 				<table class="table">
 					<thead>
 						<tr>
-							<th>Item</th>
+							<th width="50%">Item</th>
 							<th>Quantity</th>
 							<th>Price</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<th>{{pdf.name}}</th>
-							<th>2,000</th>
-							<th>$800</th>
+						<tr ng-show="pdf.name != ''">
+							<td>{{pdf.name}}</td>
+							<td>{{toAddresses.addresses.length}}</td>
+							<td>{{lob.price}}</td>
 						</tr>
 					</tbody>
-				</table>
+				</table>	
+				<div ng-show="pdf.name == ''" style="padding-left: 8px; padding-bottom: 20px">
+					<i><small>Upload a document to mail, first!</small></i>
+				</div>
+				<div class="btn btn-primary btn-large" ng-click="lob.calculatePrice()">
+					Update price
+				</div>
+				<div ng-show="lob.err.length > 0" class="alert alert-danger">
+					<small>
+						{{lob.err}}
+					</small>
+				</div>
 			</div>
 				<!-- TODO: Dynamically update this based on Price. -->
 
@@ -259,7 +306,7 @@
 		    	<input type="number" name="exp-year" ng-minlength=4 ng-maxlength=4 placeholder="YYYY" class="form-control" data-stripe="exp-year" required>
 			  </div>
 			  <div class="form-group col-lg-10">
-  				<button type="button" class="btn btn-primary" ng-disable="">Pay and Send!</button>
+  				<button type="button" class="btn btn-primary" ng-disabled="ngCreditCard.$valid">Pay and Send!</button>
   			</div>
   			<!-- After submitting, take to new page; send receipt email and page with registration
   			and tracking information. -->
