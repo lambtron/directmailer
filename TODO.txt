@@ -5,3 +5,5 @@
 - manually update the front end when user sends text messages.
 - when receive websocket request and it is not showing, then show a notification.
 - when 'ADD NEW USER" adds weird shit to the front end.
+- Stripe integration finalize it.
+- Better errer response from node API to angular.

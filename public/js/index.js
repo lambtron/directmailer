@@ -15,13 +15,16 @@ $(document).ready(function() {
 			var reader = new FileReader();
 
 			reader.onload = function(e) {
-				console.log(reader.result);
+				var csvString = reader.result;
+				console.log(csvString);
+				
+				// Clean the headers.
+				var firstLine = csvString.split('\n')[0];
+				var cleanedFirstLine = firstLine.toLowerCase().replace(/\s+/g, '');
+				csvString = csvString.replace(firstLine, cleanedFirstLine);
 
 				// Parse CSV.
-				csvFile = $.csv.toObjects(reader.result);
-
-				// Clean the headers.
-
+				csvFile = $.csv.toObjects(csvString);
 
 				scope.$apply(function() {
 					for(var i = 0; i < csvFile.length; i++ ) {
@@ -39,4 +42,7 @@ $(document).ready(function() {
 
 		};
 	});
+
+	// Setup stripe.
+  Stripe.setPublishableKey('pk_test_2WDzaC04QQjzFR6G8A4Werq1');
 });

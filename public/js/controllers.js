@@ -24,9 +24,6 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
     },
     price: 0,
     calculatePrice: function() {
-      console.log('testing price');
-      console.log(this);
-
       if(this.setReadiness()) {
         this.err = '';
         // If we have all of the pieces.
@@ -46,7 +43,7 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
             console.log('Error: ' + data);
           });
       } else {
-        this.err = 'There are still missing components.'
+        this.err = 'There are still missing components to your print and mail job.'
       };
     },
     err: ''
@@ -189,6 +186,23 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
     }
   }
 
+  var stripeObj = $scope.stripeObj = {
+    submit: function(status, response) {
+      var token = '';
+      if(response.error) {
+        console.log(response.error);
+        // there was an error. Fix it.
+      } else {
+        console.log(response.id);
+        // got stripe token, now charge it or smt
+        token = response.id;
+      };
+
+      // POST token and price to server endpoint.
+    },
+    err: ''
+  }
+
   // TODO: Check session history
 
   // TODO: If existing user and signed in, then retrieve relevant info.
@@ -205,7 +219,9 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
 			if (typeof data[0] === "undefined") {
 				// No error.
 				if (data.type == 'to') {
-          toAddresses.addresses.push(addressObj); // This address should be valid.
+          // Need to push a shallow copy of addressObj to toAddresses.addresses.
+          var addressObjClone = JSON.parse(JSON.stringify(addressObj));
+          toAddresses.addresses.push(addressObjClone); // This address should be valid.
           lob.toAddresses.push(data.id);
 				} else if (data.type == 'from') {
 					lob.fromAddressId = data.id;
@@ -243,4 +259,5 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
     // as the 'TO', otherwise, send Lob.to.
 
   };
+
 }]); 

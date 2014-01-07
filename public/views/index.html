@@ -27,8 +27,9 @@
 	<script src="/public/js/services.js"></script>
 	<script src="/public/js/controllers.js"></script>
 	<script src="/public/js/directives.js"></script>
+	<script src="/public/js/angular-payments.js"></script>
 
-	<!-- jQuery -->
+	<!-- Page specific javascript. -->
 	<script src="/public/js/index.js"></script>
 	
 </head>
@@ -289,24 +290,22 @@
 					</small>
 				</div>
 			</div>
-				<!-- TODO: Dynamically update this based on Price. -->
-
-			<form class="col-lg-6 dmStripeForm" name="ngCreditCard">
+			<form class="col-lg-6" stripe-form="stripeObj.submit" name="dmStripeForm">
 				<span class="payment-errors"></span>
+				<div class="form-group col-lg-12">
+          <input type="text" class="form-control" placeholder="Name on Card" value="andy" required />
+				</div>
 			  <div class="form-group col-lg-12">
-		    	<input type="number" name="number" placeholder="Card Number" class="form-control" data-stripe="number" required>
+		    	<input type="text" name="number" ng-model="number" payments-validate="card" payments-format="card" payments-type-model="type" ng-class="dmStripeForm.number.$card.type" class="form-control" placeholder="Card Number" required/>
+			  </div>
+			  <div class="form-group col-lg-9">
+			  	<input type="text" class="form-control" ng-model="expiry" payments-validate="expiry" payments-format="expiry" placeholder="MM/YYYY" required/>
 			  </div>
 			  <div class="form-group col-lg-3">
-		    	<input type="number" name="cvc" placeholder="CVC" class="form-control" data-stripe="cvc" required>
-			  </div>
-			  <div class="form-group col-lg-3">
-		    	<input type="number" name="exp-month" ng-minlength=2 ng-maxlength=2 placeholder="MM" class="form-control" data-stripe="exp-month" required>
-			  </div>
-			  <div class="form-group col-lg-6">
-		    	<input type="number" name="exp-year" ng-minlength=4 ng-maxlength=4 placeholder="YYYY" class="form-control" data-stripe="exp-year" required>
+		    	<input type="text" class="form-control" ng-model="cvc" payments-validate="cvc" payments-format="cvc" payments-type-model="type" placeholder="CVC" required/>
 			  </div>
 			  <div class="form-group col-lg-10">
-  				<button type="button" class="btn btn-primary" ng-disabled="ngCreditCard.$valid">Pay and Send!</button>
+  				<input type="submit" type="button" class="btn btn-primary" ng-disabled="!dmStripeForm.$valid" value="Pay and Send!"/>
   			</div>
   			<!-- After submitting, take to new page; send receipt email and page with registration
   			and tracking information. -->

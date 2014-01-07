@@ -73,6 +73,7 @@ module.exports = {
 	// - cb (req)
 	// - rest are opt
 	sendJob: function(jobObj, cb) {
+		// var jobObj = this;					// This function is .call()
 		var keys = _.keys(jobObj);
 		var totalKeys = ["to", "from", "object1"];
 		var missingKeys = _.difference(keys, totalKeys);

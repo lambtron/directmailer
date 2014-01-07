@@ -13,7 +13,8 @@ require('../app/models/user');
 var _ = require('underscore')
 	, mongoose = require('mongoose')
 	, User = mongoose.model('User')
-	, Lob = require('../app/helpers/lob');
+	, Lob = require('../app/helpers/lob')
+	, Stripe = require('../app/helpers/stripe');
 
 // Public functions. ===============================================================================
 module.exports = function(app) {
@@ -42,6 +43,8 @@ module.exports = function(app) {
 			if (err) {
 				console.log('Error (lob): ');
 				console.log(err);
+
+				// Send error code.
 				res.send(err);
 			} else {
 				data.file = file;
@@ -74,6 +77,8 @@ module.exports = function(app) {
 				if (err) {
 					console.log('Error (lob job): ');
 					console.log(err);
+
+					// Send error code.
 					res.send(err);
 				} else {
 					console.log(data);
@@ -96,6 +101,8 @@ module.exports = function(app) {
 			if (err) {
 				console.log('Error (lob): ');
 				console.log(err);
+
+				// Send error code.
 				res.send(err);
 			} else {
 				data.type = req.body.type;
