@@ -8,5 +8,16 @@ var _ = require('underscore');
 
 // Public functions.
 module.exports = {
-	
+	chargeCard: function(obj, cb) {
+		// Error handling.
+		// Required arguments.
+		// - amount
+		// - currency (default to USD here)
+		// - customer, OR
+		// - card
+		// - CVC! (highly recommended)
+		// Optional
+		// - description
+		STRIPE.charges.create(obj, cb);
+	}
 };

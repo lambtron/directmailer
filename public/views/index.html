@@ -293,7 +293,7 @@
 			<form class="col-lg-6" stripe-form="stripeObj.submit" name="dmStripeForm">
 				<span class="payment-errors"></span>
 				<div class="form-group col-lg-12">
-          <input type="text" class="form-control" placeholder="Name on Card" value="andy" required />
+          <input type="text" class="form-control" ng-model="name" placeholder="Name on Card" value="andy" required />
 				</div>
 			  <div class="form-group col-lg-12">
 		    	<input type="text" name="number" ng-model="number" payments-validate="card" payments-format="card" payments-type-model="type" ng-class="dmStripeForm.number.$card.type" class="form-control" placeholder="Card Number" required/>

@@ -167,24 +167,36 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
       toAddresses.addresses.splice(index, 1);
       lob.toAddresses.splice(index, 1);
     }
-  }
+  };
 
   var stripeObj = $scope.stripeObj = {
     submit: function(status, response) {
-      var token = '';
       if(response.error) {
         console.log(response.error);
-        // there was an error. Fix it.
+        this.err = response.error;
       } else {
         console.log(response.id);
-        // got stripe token, now charge it or smt
-        token = response.id;
-      };
+        // got stripe token, now POST it to server.
+        var obj = {};
+        obj.card = response.id;
+        obj.amount = lob.price;
+        obj.description = 'DirectMailer payment for ' + lob.name; // Add a receipt ID in the back.
+        obj.cvc = $scope.cvc;   // For stripe back end error handling.
 
-      // POST token and price to server endpoint.
+        // POST token and price to server endpoint.
+        $http.post('/api/checkout', obj)
+        .success(function(data) {
+          // It works!
+          console.log('Stripe worked: ' + JSON.stringify(data));
+        })
+        .error(function(data) {
+          // Something went wrong.
+          console.log('Error (stripe): ' + data);
+        });
+      };
     },
     err: ''
-  }
+  };
 
   // TODO: Check session history
 
