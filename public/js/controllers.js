@@ -28,20 +28,14 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
         this.err = '';
         // If we have all of the pieces.
         $http.post('/api/lob', this)
-          .success(function(data) {
-            if(typeof data[0] === "undefined") {
-              // Success
-              console.log(data);
-              lob.price = data.price;
-            } else {
-              // Error
-              console.log(data);
-              lob.err = data[0].message;
-            };
-          })
-          .error(function(data) {
-            console.log('Error: ' + data);
-          });
+        .success(function(data) {
+          console.log(data);
+          lob.price = data.price;
+        })
+        .error(function(data) {
+          console.log('Error: ' + data[0].message);
+          lob.err = data[0].message;
+        });
       } else {
         this.err = 'There are still missing components to your print and mail job.'
       };
@@ -68,25 +62,18 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
         this.isSaved = false;
   			// Submit POST request.
   			$http.post('/api/file', obj)
-  				.success(function(data) {
-
-          if (typeof data[0] === "undefined") {
-            // No error.
-            lob.object = data.id;
-            pdf.isSaved = true;
-            pdf.isValid = true;
-          } else {
-            // Error.
-            pdf.err = data[0].message;
-            pdf.isSaved = false;
-            pdf.isValid = false;
-            pdf.isDirty = true;
-          };
-
-					console.log(data);
+			  .success(function(data) {
+          console.log(data);
+          lob.object = data.id;
+          pdf.isSaved = true;
+          pdf.isValid = true;
 				})
 				.error(function(data) {
-					console.log('Error: ' + data);
+					console.log('Error: ' + data[0].message);
+          pdf.err = data[0].message;
+          pdf.isSaved = false;
+          pdf.isValid = false;
+          pdf.isDirty = true;
 				});
   		};
   	},
@@ -100,12 +87,14 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
         function( item ) {
           // console.log(item);
           // Make sure it is a PDF file, as that is only allowed by Lob.
+          return true;
           if (item.type.indexOf('pdf') != -1) {
             pdf.isValid = true;
             return true;
           } else {
             pdf.err = 'Sorry, you must upload a .pdf file.';
             pdf.isValid = false;
+            console.log('Sorry, you must upload a .pdf file.');
             console.log(pdf);
             return false;
           };
@@ -114,26 +103,20 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
     })
     .bind('success', function (event, xhr, item, response) {
       // console.log('Success', xhr, item, response);
-      console.log(response);
-      if (typeof response[0] === 'undefined') {
-      	// Success.
-      	lob.object = response.id;
-      	pdf.file = response.file;
-      	pdf.name = response.name;
-      	pdf.isSaved = true;
-      	pdf.isValid = true;
-      } else {
-      	// Lob related error.
-      	console.log(response[0].message);
-      	pdf.err = response[0].message;
-      	pdf.file = '';
-      	pdf.name = '';
-      	pdf.isSaved = false;
-      	pdf.isValid = false;
-      };
+      // console.log(response);
+    	lob.object = response.id;
+    	pdf.file = response.file;
+    	pdf.name = response.name;
+    	pdf.isSaved = true;
+    	pdf.isValid = true;
     })
     .bind('error', function (event, xhr, item, response) {
       console.info('Error', xhr, item, response);
+      pdf.err = response[0].message;
+      pdf.file = '';
+      pdf.name = '';
+      pdf.isSaved = false;
+      pdf.isValid = false;
     }),
   	remove: function(item) {
   		item.remove();	// Reset everything if the user decides to remove the item.
@@ -215,32 +198,26 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
   	// as a successful response.
 
 		$http.post('/api/address', addressObj)
-			.success(function(data) {
-			if (typeof data[0] === "undefined") {
-				// No error.
-				if (data.type == 'to') {
-          // Need to push a shallow copy of addressObj to toAddresses.addresses.
-          var addressObjClone = JSON.parse(JSON.stringify(addressObj));
-          toAddresses.addresses.push(addressObjClone); // This address should be valid.
-          lob.toAddresses.push(data.id);
-				} else if (data.type == 'from') {
-					lob.fromAddressId = data.id;
-				};
-				addressObj.isSaved = true;
-        addressObj.isValid = true;
-			} else {
-				// Error.
-				addressObj.err = data[0].message;
-
-				addressObj.isValid = false;
-        addressObj.isSaved = false;
+		.success(function(data) {
+			if (data.type == 'to') {
+        // Need to push a shallow copy of addressObj to toAddresses.addresses.
+        var addressObjClone = JSON.parse(JSON.stringify(addressObj));
+        toAddresses.addresses.push(addressObjClone); // This address should be valid.
+        lob.toAddresses.push(data.id);
+			} else if (data.type == 'from') {
+				lob.fromAddressId = data.id;
 			};
+			addressObj.isSaved = true;
+      addressObj.isValid = true;
 
 			console.log(addressObj);
 		})
 		.error(function(data) {
 			// Error.
-			console.log('Error: ' + data);
+			console.log('Error: ' + data[0].message);
+      addressObj.err = data[0].message;
+      addressObj.isValid = false;
+      addressObj.isSaved = false;
 		});
   };
 

@@ -45,7 +45,7 @@ module.exports = function(app) {
 				console.log(err);
 
 				// Send error code.
-				res.send(err);
+				res.send(err, 400);
 			} else {
 				data.file = file;
 				console.log(data);
@@ -79,7 +79,7 @@ module.exports = function(app) {
 					console.log(err);
 
 					// Send error code.
-					res.send(err);
+					res.send(err, 400);
 				} else {
 					console.log(data);
 					res.send(data);
@@ -103,7 +103,7 @@ module.exports = function(app) {
 				console.log(err);
 
 				// Send error code.
-				res.send(err);
+				res.send(err, 400);
 			} else {
 				data.type = req.body.type;
 				console.log(data);
@@ -127,7 +127,7 @@ module.exports = function(app) {
 	app.get('/api/users', function(req, res) {
 		User.find(function(err, users) {
 			if (err) {
-				res.send(err);
+				res.send(err, 400);
 			};
 			res.json(users);
 		});
@@ -139,13 +139,13 @@ module.exports = function(app) {
 			_id : req.params.user_id
 		}, function(err, user) {
 			if (err) {
-				res.send(err);
+				res.send(err, 400);
 			};
 
 			// Get and return all of the messages after the message is deleted.
 			User.find(function(err, users) {
 				if (err) {
-					res.send(err);
+					res.send(err, 400);
 				};
 				res.json(users);
 			});
