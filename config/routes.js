@@ -121,7 +121,7 @@ module.exports = function(app) {
 
 		req.body.object = req.body.object || '';
 
-		if(req.body.object != 'event')
+		if(req.body.object != 'event') {
 			// From here, call Stripe with credit card token.
 			var obj = {};
 			obj.card = req.body.card;
@@ -140,7 +140,8 @@ module.exports = function(app) {
 			// In this case, Stripe is sending us event information.
 			// req.boyd.type == 'charge.succeeded'
 			// - charge.failed
-		}
+			console.log(req.body.type);
+		};
 	});
 
 	// Stripe event webhooks.
