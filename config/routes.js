@@ -141,6 +141,8 @@ module.exports = function(app) {
 			// req.boyd.type == 'charge.succeeded'
 			// - charge.failed
 			console.log(req.body.type);
+
+			// 
 		};
 	});
 
