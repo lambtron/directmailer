@@ -44,5 +44,5 @@ $(document).ready(function() {
 	});
 
 	// Setup stripe.
-  Stripe.setPublishableKey('pk_test_2WDzaC04QQjzFR6G8A4Werq1');
+  Stripe.setPublishableKey('pk_live_zOfOwq7NI2ajzRKakRJa54mZ');
 });

@@ -26,16 +26,19 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
     calculatePrice: function() {
       if(this.setReadiness()) {
         this.err = '';
-        // If we have all of the pieces.
-        $http.post('/api/lob', this)
-        .success(function(data) {
-          console.log(data);
-          lob.price = data.price;
-        })
-        .error(function(data) {
-          console.log('Error: ' + data[0].message);
-          lob.err = data[0].message;
-        });
+        // Quantity x fixed price.
+        var quantity = (this.toAddresses.length == 0) ? 1 : this.toAddresses.length;
+        // if pdf.settingId = 100, then use one multiplier
+        // if pdf.settingId = 101, then use another multiplier
+        // $1.5 until 500quantity
+        var typeMultiplier = 1.5;
+        if (pdf.settingId == 101) {
+          typeMultiplier = 2;
+        };
+        if (quantity < 500) {
+          typeMultiplier = typeMultiplier/2;
+        };
+        this.price = quantity * typeMultiplier;
       } else {
         this.err = 'There are still missing components to your print and mail job.'
       };
@@ -240,13 +243,6 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
 		if (form.$valid) {
 			cb(ngModelObj);
 		};
-  };
-
-  $scope.checkLobReady = function() {
-  	// This is just to check if the Lob has all of its necessary properties.
-    // Must check to see if there are multiple recipient addresses. If so, then send the array
-    // as the 'TO', otherwise, send Lob.to.
-
   };
 
 }]); 
