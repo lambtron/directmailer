@@ -283,17 +283,19 @@ window.analytics.page();
 							<td>{{lob.price}}</td>
 						</tr>
 					</tbody>
-				</table>	
-				<div ng-show="pdf.name == ''" style="padding-left: 8px; padding-bottom: 20px">
+				</table>
+				<div style="padding-left: 8px; padding-bottom: 20px">
 					<i><small>Upload a document to mail, first!</small></i>
 				</div>
 				<div class="btn btn-primary btn-large" ng-click="lob.calculatePrice()">
 					Update price
 				</div>
-				<div ng-show="lob.err.length > 0" class="alert alert-danger">
-					<small>
-						{{lob.err}}
-					</small>
+				<div ng-show="lob.err.length > 0" style="padding: 20px 0px 20px 0px">
+					<div class="alert alert-danger">
+						<small>
+							{{lob.err}}
+						</small>
+					</div>
 				</div>
 			</div>
 			<form class="col-lg-6" stripe-form="stripeObj.submit" name="dmStripeForm">
@@ -318,7 +320,7 @@ window.analytics.page();
 			</form>
 		</div>
 		<!-- 5. Track your mail! Get email updates by signing up -->
-		<div class="row">
+		<div class="row" style="height: 200px">
 		</div>
 	</div>
 	<!-- begin olark code -->
