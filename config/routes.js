@@ -115,15 +115,17 @@ module.exports = function(app) {
 	// POST check out.
 	app.post('/api/checkout', function(req, res) {
 		// Package STRIPE (charge them!) and LOB it over (send them the JOB object).
-		console.log(req.body);
+		// console.log(req.body);
 
 		// From here, call Stripe with credit card token.
 		var obj = {};
 		obj.card = req.body.card;
-		obj.amount = req.body.amount;
+		obj.amount = 1000;
 		obj.description = req.body.description;
-		obj.cvc = req.body.cvc;
+		// obj.cvc = req.body.cvc;
 		obj.currency = 'usd';
+
+		console.log(obj);
 
 		Stripe.chargeCard(obj, function(data) {
 			console.log(JSON.stringify(data));
