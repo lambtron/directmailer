@@ -88,13 +88,13 @@ directMailer.controller('mainController', ['$scope', '$http', '$fileUploader',
       alias: 'pdfFile',
       filters: [
         function( item ) {
-          // console.log(item);
+          console.log(item);
           // Make sure it is a PDF file, as that is only allowed by Lob.
-          return true;
           if (item.type.indexOf('pdf') != -1) {
             pdf.isValid = true;
             return true;
           } else {
+            // TODO: cannot set properties of pdf object at this scope.
             pdf.err = 'Sorry, you must upload a .pdf file.';
             pdf.isValid = false;
             console.log('Sorry, you must upload a .pdf file.');

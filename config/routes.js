@@ -132,9 +132,14 @@ module.exports = function(app) {
 
 			console.log(obj);
 
-			Stripe.chargeCard(obj, function(data) {
-				console.log(data);
-				res.send(data);
+			Stripe.chargeCard(obj, function(err, data) {
+				if (err) {
+					res.send(err, 400);
+				} else {
+					// Success! Now submit LOB.
+					console.log(data);
+					res.send(data);
+				};
 			});
 		} else {
 			// In this case, Stripe is sending us event information.
@@ -144,11 +149,6 @@ module.exports = function(app) {
 
 			// 
 		};
-	});
-
-	// Stripe event webhooks.
-	app.post('/api/checkout/', function(req, res) {
-		console.log(req.body);
 	});
 
 	// Database stuff. ===============================================================================
