@@ -203,39 +203,41 @@ window.analytics.page();
 			</form>
 
 			<div class="col-lg-6">
-				<table class="table">
-					<thead>
-						<tr>
-							<th width="20%">Name</th>
-							<th>Address</th>
-							<th>City</th>
-							<th width="5%">State</th>
-							<th width="5%">ZIP</th>
-							<th width="5%"></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-repeat="address in toAddresses.addresses track by $index">
-							<td>{{address.name}}</td>
-							<td>{{address.address_line1}} {{address.address_line2}}</td>
-							<td>{{address.address_city}}</td>
-							<td>{{address.address_state}}</td>
-							<td>{{address.address_zip}}</td>
-							<td class="" ng-click="toAddresses.remove($index)" style="cursor: pointer">x</td>
-						</tr>
-					</tbody>
-				</table>	
-				<div ng-show="toAddresses.addresses.length == 0" style="padding-left: 8px; padding-bottom: 20px">
-					<i><small>Add a recipient address and it will show up here!</small></i>
-				</div>
-	  		<div class="form-group col-lg-12" ng-show="toAddress.isValid == false && toAddress.isDirty">
-					<div class="alert alert-danger">
-						<small>{{toAddress.err}}</small>
+				<div class="col-lg-12">
+					<table class="table">
+						<thead>
+							<tr>
+								<th width="20%">Name</th>
+								<th>Address</th>
+								<th>City</th>
+								<th width="5%">State</th>
+								<th width="5%">ZIP</th>
+								<th width="5%"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="address in toAddresses.addresses track by $index">
+								<td>{{address.name}}</td>
+								<td>{{address.address_line1}} {{address.address_line2}}</td>
+								<td>{{address.address_city}}</td>
+								<td>{{address.address_state}}</td>
+								<td>{{address.address_zip}}</td>
+								<td class="" ng-click="toAddresses.remove($index)" style="cursor: pointer">x</td>
+							</tr>
+						</tbody>
+					</table>
+					<div ng-show="toAddresses.addresses.length == 0" style="padding-left: 8px; padding-bottom: 20px">
+						<i><small>Add a recipient address and it will show up here!</small></i>
 					</div>
-				</div>
-			  <div class="form-group col-lg-12" ng-show="toAddress.isSaved == true">
-					<div class="alert alert-success">
-						<small> Great, we got the information!</small>
+		  		<div class="form-group" ng-show="toAddress.isValid == false && toAddress.isDirty">
+						<div class="alert alert-danger">
+							<small>{{toAddress.err}}</small>
+						</div>
+					</div>
+				  <div class="form-group" ng-show="toAddress.isSaved == true">
+						<div class="alert alert-success">
+							<small> Great, we got the information!</small>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -268,39 +270,45 @@ window.analytics.page();
 				<h2>4. Check out and send</h2>
 			</div>
 			<!-- Dynamically generate a receipt here. -->
-			
-			<div class="col-lg-6">
-				<table class="table">
-					<thead>
-						<tr>
-							<th width="50%">Item</th>
-							<th>Quantity</th>
-							<th>Price</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-show="pdf.name != ''">
-							<td>{{pdf.name}}</td>
-							<td>{{toAddresses.addresses.length}}</td>
-							<td>{{lob.price}}</td>
-						</tr>
-					</tbody>
-				</table>
-				<div style="padding-left: 8px; padding-bottom: 20px">
-					<i><small>Upload a document to mail, first!</small></i>
-				</div>
-				<div class="btn btn-primary btn-large" ng-click="lob.calculatePrice()">
-					Update price
-				</div>
-				<div ng-show="lob.err.length > 0" style="padding: 20px 0px 20px 0px">
-					<div class="alert alert-danger">
-						<small>
-							{{lob.err}}
-						</small>
+			<div class="col-lg-6 form-group">
+				<div class="col-lg-12">
+					<table class="table">
+						<thead>
+							<tr>
+								<th width="50%">Item</th>
+								<th>Quantity</th>
+								<th>Price</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-show="pdf.name != ''">
+								<td>{{pdf.name}}</td>
+								<td>{{toAddresses.addresses.length}}</td>
+								<td>{{lob.price}}</td>
+							</tr>
+						</tbody>
+					</table>
+					<div style="padding-left: 8px; padding-bottom: 20px">
+						<i><small>Upload a document to mail, first!</small></i>
+					</div>
+					<div class="form-group">
+						<div class="btn btn-primary btn-large pull-right" ng-click="lob.calculatePrice()">
+							Update price
+						</div>
+					</div>
+					<div ng-show="lob.err.length > 0" style="padding: 40px 0px 0px 0px" class="form-group">
+						<div class="alert alert-danger">
+							<small>
+								{{lob.err}}
+							</small>
+						</div>
 					</div>
 				</div>
 			</div>
-			<form class="col-lg-6" stripe-form="stripeObj.submit" name="dmStripeForm">
+			<form class="col-lg-6 form-group" stripe-form="stripeObj.submit" name="dmStripeForm">
+				<div class="form-group col-lg-12">
+					<h4>Your Credit Card information</h4>
+				</div>
 				<span class="payment-errors"></span>
 				<div class="form-group col-lg-12">
           <input type="text" class="form-control" ng-model="name" placeholder="Name on Card" value="andy" required />
